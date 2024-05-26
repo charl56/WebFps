@@ -20,7 +20,7 @@ export default {
   },
   created(){
     if(import.meta.env.DEV){  // Permet de ne pas avoir les message en mode dev
-      this.presentation = false
+      this.presentation = true
     }
     
 

@@ -6,6 +6,9 @@ const sight = new URL('../../assets/Icons/crosshair3.png', import.meta.url).href
         <div id="sight" class="">
             <v-img class="sight-img" :src="sight"></v-img>
         </div>
+        <div id="div-msg-spawn">
+            <p class="msg-spawn">Press 'space' to spawn</p>
+        </div>
         <div id="top-left" class="div-quart"></div>
         <div id="top-right" class="div-quart"></div>
         <div id="bottom-left" class="div-quart">
@@ -156,5 +159,25 @@ export default {
     transform: translateX(0) !important;
     right: 0 !important;
     left: 0 !important;
+}
+
+.msg-spawn {
+    font-size: larger;
+    font-weight: 700;
+    animation: blink-animation 2s infinite;
+}
+
+@keyframes blink-animation {
+    0% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 </style>

@@ -86,7 +86,7 @@ export const web_socket = (() => {
                 console.log('WebSocket connection closed');
             };
 
-            document.addEventListener('keydown', (event) => {
+            document.addEventListener('keyup', (event) => {
                 this.Broadcast({ topic: 'health.death', });
 
                 if (event.key == 't') {
@@ -168,7 +168,6 @@ export const web_socket = (() => {
         }
 
         deathTrigger() {
-            console.log("je suis moorrt");
             this.Broadcast({ topic: 'health.death', });
             this.FindEntity('playerSpawner').GetComponent('Player').OnDeath();
         }

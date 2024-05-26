@@ -48,9 +48,8 @@ export const player = (() => {
         }
 
         OnDeath() {
-            console.log("death player")
             this.dead_ = true
-            this.e_.SetPosition(this.respawnZone);
+            document.getElementById('div-msg-spawn').style.display = 'block'
         }
 
         Spawn() {
@@ -67,6 +66,7 @@ export const player = (() => {
                 this.Spawn();
                 this.shouldRespawn = false; // Réinitialiser l'indicateur
                 this.dead_ = false;
+                document.getElementById('div-msg-spawn').style.display = 'none'
             } else if(this.dead_) {
                 this.e_.SetPosition(this.respawnZone);
             }
