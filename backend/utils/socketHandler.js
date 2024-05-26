@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const userService = require('../models/userModel');
+const mapService = require('../models/mapModel');
 
 const initWebSocket = (http) => {
     const wss = new WebSocket.Server({ server: http });
@@ -39,8 +40,10 @@ const initWebSocket = (http) => {
 
         ws.on('close', () => {
             console.log(`${id} is disconnected`);
+            mapService.decrementPlayerCount(id); 
             broadcast({ type: 'player disconnect', playerId:id, playerCount: wss.clients.size });
             delete players[id];
+
         });
 
         ws.on('message', (message) => {

@@ -22,11 +22,9 @@
                 <p>Choix de la map</p>
                 <div class="radio-btn-map">
                     <div v-for="(map, index) in maps" :key="index" class="radio-btn-input"
-                        :class="{ 'map-available': map.availability, 'map-not-available': !map.availability }">
-                        <input type="radio" :id="'map-' + index" :value="map" v-model="mapChoosen"
-                            :disabled="!map.availability" required>
+                        :class="{ 'map-available': map.availability, 'map-not-available': !map.availability     || map.nbplayer == map.quantity }">
+                        <input type="radio" :id="'map-' + index" :value="map" v-model="mapChoosen" :disabled="!map.availability || map.nbplayer == map.quantity" required>
                         <label :for="'map-' + index">{{ map.name }}</label>
-                        <!-- <input type="hidden" :id="'map-id-' + index" :value="map.id"> -->
                         <p>{{ map.nbplayer }} / {{ map.quantity }}</p>
                     </div>
                 </div>
@@ -68,7 +66,7 @@ export default {
                 return;
             }
 
-            const response = await sendRequest('POST', 'login', { username: this.username });
+            const response = await sendRequest('POST', 'login', { username: this.username, map: this.mapChoosen.name});
             if (response.status == "success") {
                 localStorage.setItem('mapChoosen', this.mapChoosen.name)
                 eventBus.emit("startGame")
