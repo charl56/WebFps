@@ -69,7 +69,7 @@ export const web_socket = (() => {
                     case 'initPlayer':
                         this.player.id = data.playerId;
                         this.player.health = 100;
-                       
+
                         // Check all that isn't local player
                         for (let i = 0; i < data.playerCount; i++) {
                             if (data.players[i] !== this.player.id) {
@@ -115,7 +115,7 @@ export const web_socket = (() => {
 
         handlePlayerConnect(playerId) {
 
-            if(this.player.id === undefined) return;    // Because this function can be call before player init
+            if (this.player.id === undefined) return;    // Because this function can be call before player init
 
             if (playerId !== this.player.id) {
                 this.initRemotePlayer(playerId);
@@ -131,7 +131,7 @@ export const web_socket = (() => {
         async initRemotePlayer(playerID) {
             const enemy = new entity.Entity();
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params))
-            enemy.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(this.params));
+            enemy.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(this.params));       // Set physical body to enemies
 
             this.Manager.Add(enemy, playerID);
 
@@ -147,6 +147,7 @@ export const web_socket = (() => {
         }
 
         updateRemotePlayers(remotePlayers) {
+
             const positionSync = new THREE.Vector3();
             const lookDirection = new THREE.Vector4();
             for (let id in remotePlayers) {
@@ -156,6 +157,7 @@ export const web_socket = (() => {
 
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
+
                 } else {
                     this.player.health = remotePlayers[id].health;
                 }

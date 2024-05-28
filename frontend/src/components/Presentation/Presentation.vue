@@ -1,19 +1,11 @@
 <template>
     <div class="div-presentation">
-        <!-- <div class="mt-5">
-            <p class="text-h5 mb-1">Bienvenue</p>
-        </div>
-        <div class="mt-10">
-            <p class="my-1">En cours de dev, donc il reste pas mal de points à améliorer, de bug à
-                corriger...</p>
-            <p class="my-1">Passez en mode plein écran (F11) avant de commencer</p>
-        </div> -->
+
         <div class="mt-10">
             <p class="my-1">ZQSD pour se déplacer</p>
             <p class="my-1">Espace pour sauter</p>
             <p class="my-1">VerMaj pour se baisser</p>
             <p class="my-1">Maj pour sprinter</p>
-            <!-- <p class="txt-h6 my-1 text-center">Entré pour activer les bruits</p> -->
         </div>
         <div class="mt-10">
             <form @submit.prevent="login">

@@ -175,7 +175,7 @@ export const first_person_camera = (() => {
                 type: 'updateClientPos',
                 position: [
                     this.camera_.position.x,
-                    this.camera_.position.y - 2.3,
+                    this.camera_.position.y,
                     this.camera_.position.z,
                 ],
                 direction: this.camera_.quaternion.toArray()

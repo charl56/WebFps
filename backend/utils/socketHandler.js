@@ -17,7 +17,7 @@ const initWebSocket = (http) => {
 
     setInterval(() => {
         broadcast({ type: 'playerPositions', players });
-    }, 8);
+    }, 1000 / 60);
 
     wss.on('connection', (ws) => {
         // const id = ws._socket.remoteAddress + ":" + ws._socket.remotePort;

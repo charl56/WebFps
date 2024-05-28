@@ -45,6 +45,9 @@ html::-webkit-scrollbar {
 html {
   margin: 0;
   height: 100%;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
   background-color: #ffffff;
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
@@ -57,10 +60,6 @@ html {
   text-align: center;
   color: #2c3e50;
   background-color: #ffffff !important;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
 }
 /* Surlignage du texte */
 ::selection{

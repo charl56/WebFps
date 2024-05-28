@@ -29,14 +29,15 @@ exports.incrementPlayerCount = (mapName) => {
 
 exports.decrementPlayerCount = (username) => {
     const userList = userModel.getAll()
-    const user = userList.find(user => user.username === username);
-    if (!user) {
-        throw new Error('User not found');
-    }
-    const map = mapList.find(map => map.name === user.mapName);
-    if (map && map.nbplayer > 0) {
-        map.nbplayer -= 1;
-    } else {
-        throw new Error('Map not found or player count already zero');
+    const userIndex = userList.findIndex(user => user.username === username);
+
+    if (userIndex!== -1) {
+        const user = userList[userIndex];
+        const map = mapList.find(map => map.name === user.mapName);
+
+        if (map && map.nbplayer > 0) {
+            map.nbplayer -= 1;
+            userList.splice(userIndex, 1);
+        }
     }
 };
