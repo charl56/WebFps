@@ -69,7 +69,6 @@ export const entity_enemy = (() => {
     }
 
     OnUpdatePosition_(msg) {
-      console.log("entity : ", msg.value)
       this.group_.position.copy(msg.value);
     }
 

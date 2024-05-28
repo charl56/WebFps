@@ -87,7 +87,7 @@ export const web_socket = (() => {
             };
 
             document.addEventListener('keyup', (event) => {
-                this.Broadcast({ topic: 'health.death', });
+                // this.Broadcast({ topic: 'health.death', });
 
                 if (event.key == 't') {
                     this.openForm();
@@ -160,6 +160,7 @@ export const web_socket = (() => {
 
                 } else {
                     this.player.health = remotePlayers[id].health;
+                    this.player.health <= 0 ? this.player.health = 100 : null
                 }
             }
         }
@@ -292,6 +293,7 @@ export const web_socket = (() => {
 
         updateUi() {
             try {
+                console.log(this.player.health)
                 const playerHealth = this.player.health > 0 ? this.player.health : 0;
                 const healthAsPercentage = playerHealth / 100;
                 this.bar_.style.width = Math.floor(200 * healthAsPercentage) + 'px';
