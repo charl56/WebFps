@@ -60,9 +60,6 @@ const initWebSocket = (http) => {
                     broadcast({ type: 'chat message', username: data.username, message: data.message });
                     break;
                 case 'kill message':
-                    players[data.killed].health = 100;
-                    console.log(players)
-                    console.log(players[data.killed])
                     broadcast({ type: 'kill message', shooter: data.shooter, killed: data.killed });
                     break;
                 case 'updateClientPos':
@@ -76,14 +73,9 @@ const initWebSocket = (http) => {
                         players[data.victim].health -= data.damage;
                         if (players[data.victim].health <= 0) {
                             players[data.victim].health = 100;
-                            console.log(players)
-                            console.log(players[data.killed])
                             broadcast({ type: 'kill message', shooter: id, victim: data.victim });
                         }
                     }
-                    break;
-                case 'triggerRemoteRocket':
-                    broadcast({ type: 'shootSyncRocket', player: players[id], id });
                     break;
                 default:
                     console.error('Unknown message type:', data.type);

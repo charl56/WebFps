@@ -1,5 +1,5 @@
 <script setup>
-const sight = new URL('../../assets/Icons/crosshair3.png', import.meta.url).href
+const sight = new URL('../../assets/Icons/crosshair.png', import.meta.url).href
 </script>
 <template>
     <div class="div-display d-flex align-center justify-center">

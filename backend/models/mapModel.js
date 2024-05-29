@@ -12,8 +12,7 @@ class Map {
 
 const mapList = [
     new Map(1, 'Space', 5, 0, true),
-    new Map(2, 'Zombie', 6, 0, true),
-    new Map(3, 'maap', 7, 0, false),
+    new Map(2, 'Zombie', 6, 0, false),
 ];
 
 exports.getAll = () => mapList.map(map => ({...map }));
