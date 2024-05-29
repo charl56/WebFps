@@ -59,6 +59,7 @@ export const web_socket = (() => {
                         this.addChatMessage(data.username, data.message);
                         break;
                     case 'kill message':
+                        console.log("kill message grom back")
                         if (data.shooter) {
                             this.addKillMessage(data.shooter, data.victim);
                         }
