@@ -27,7 +27,7 @@ export const entity_manager = (() => {
                 n = this._GenerateName();
             }
 
-            (n != 'zombie') ? this.entitiesMap_[n] = e : false
+            this.entitiesMap_[n] = e 
 
             this.entities_.push(e);
 

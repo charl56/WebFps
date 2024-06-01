@@ -29,6 +29,9 @@ export const player = (() => {
             this.shouldRespawn = false;
             this.respawnZone = new THREE.Vector3(0, 27, 0);
         }
+        InitEntity(){
+            console.log("init player")
+        }
 
         InitComponent() {
             this.e_.AddComponent("PlayerInput", new player_input.PlayerInput(this.params_));                                       // Input player (move, shoot, jump, pause...)

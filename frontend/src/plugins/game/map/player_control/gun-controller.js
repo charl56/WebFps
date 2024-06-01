@@ -183,7 +183,7 @@ export const gun_controller = (() => {
                 this.bullets_--
                 // Bullets and magazines
                 if (this.bullets_ == 0 && this.nbMagazine_ > 0) {
-                    this.nbMagazine_--
+                    // this.nbMagazine_--       // Comment to have infinite bullets
                     this.bullets_ = this.magazine_
                     this.loadTimer_ = DEFAULT_LOAD_TIMER
                 }

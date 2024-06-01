@@ -73,16 +73,10 @@ export const entity = (() => {
       this.dead_ = true;
     }
 
-    // AddComponent(c) {
-    //   c.SetParent(this);
-    //   this.components_[c.constructor.name] = c;
-
-    //   c.InitComponent();
-    // }
-
     AddComponent(n, c) {
       c.SetParent(this);
       this.components_[n] = c;
+      // this.components_[c.constructor.name] = c;
 
       c.InitComponent();
     }

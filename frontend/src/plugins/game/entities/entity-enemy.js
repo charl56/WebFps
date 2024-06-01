@@ -62,6 +62,7 @@ export const entity_enemy = (() => {
     }
 
     InitComponent() {
+      console.log("init entiti enemy")
       this.RegisterHandler_('health.death', (m) => { this.OnDeath_(m); });
       this.RegisterHandler_('health.update', (m) => { this.OnHit_(m); });
       this.RegisterHandler_('update.position', (m) => { this.OnUpdatePosition_(m); });
@@ -88,7 +89,6 @@ export const entity_enemy = (() => {
     }
 
     async LoadModels_() {
-
       const skinNames = Object.keys(skins);
       const enemyGltf = skins[skinNames[Math.floor(Math.random() * skinNames.length)]];
 
@@ -137,7 +137,7 @@ export const entity_enemy = (() => {
           this.stateMachine_.SetState(this.queuedState_)
           this.queuedState_ = null;
         } else {
-          this.stateMachine_.SetState('idle');
+          this.stateMachine_.SetState('walk');
         }
 
       }, undefined, (error) => {
@@ -146,6 +146,7 @@ export const entity_enemy = (() => {
     }
 
     Update(timeInSeconds) {
+      console.log("EntityEnemy => this.group_.position.y : ", this.group_.position.y)
       if (!this.stateMachine_) {
         return;
       }

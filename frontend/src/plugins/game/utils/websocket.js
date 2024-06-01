@@ -26,12 +26,16 @@ export const web_socket = (() => {
             this.players = {};
             this.chatMessages = new Array();
 
+
             this.ui = {
                 body: document.querySelector('body'),
                 chatSection: document.getElementById('chatSection'),
                 chatList: document.querySelector('.chatList'),
                 crosshair: null,
             };
+        }
+        InitEntity(){
+            console.log("init entity socket")
         }
 
         InitComponent() {
@@ -59,7 +63,6 @@ export const web_socket = (() => {
                         this.addChatMessage(data.username, data.message);
                         break;
                     case 'kill message':
-                        console.log("kill message grom back")
                         if (data.shooter) {
                             this.addKillMessage(data.shooter, data.victim);
                         }
@@ -132,12 +135,12 @@ export const web_socket = (() => {
         async initRemotePlayer(playerID) {
             const enemy = new entity.Entity();
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params))
-            enemy.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(this.params));       // Set physical body to enemies
-
-            this.Manager.Add(enemy, playerID);
+            enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
+            this.Manager.Add(enemy, "playerID");
 
             enemy.SetPosition(new THREE.Vector3(0, 27, 0));
             enemy.SetActive(false);
+            console.log(enemy)
 
             this.players[playerID] = {};
             this.players[playerID].entity = enemy;
@@ -294,7 +297,6 @@ export const web_socket = (() => {
 
         updateUi() {
             try {
-                console.log(this.player.health)
                 const playerHealth = this.player.health > 0 ? this.player.health : 0;
                 const healthAsPercentage = playerHealth / 100;
                 this.bar_.style.width = Math.floor(200 * healthAsPercentage) + 'px';
