@@ -147,10 +147,10 @@ export const gun_controller = (() => {
         UpdateAiming_(input) {
             const camera = this.Parent.parent_.entities_.find((obj) => obj.Name == "threejs").components_.ThreeJSController.camera_;
 
-            if (input.current_.rightButton) {
-                camera.fov = 90
-            } else {
+            if (input.mouseRightReleased()) {   // Click
                 camera.fov = 45
+            } else {
+                camera.fov = 90
             }
         }
 
@@ -165,7 +165,7 @@ export const gun_controller = (() => {
 
             this.cooldown_ -= timeElapsedS;
             this.loadTimer_ -= timeElapsedS;
-            // this.UpdateAiming_(input);  // Update : aim or not
+            this.UpdateAiming_(input);  // Update : aim or not
             this.UpdateGunRecoil_();    // Recoil at fire
 
             // Don't shot firing rate or weapon not load with bullets
@@ -202,6 +202,7 @@ export const gun_controller = (() => {
                 end.add(this.Parent.Position);
 
                 const offset = new THREE.Vector3(0.1, -0.125, -0.75);
+                // const offset = new THREE.Vector3(1, -1.25, -0.75);
 
                 const tracer = this.blaster_.CreateParticle();
                 // tracer.Start = this.Parent.Position.clone();
@@ -217,12 +218,12 @@ export const gun_controller = (() => {
                 tracer.Velocity = tracer.End.clone();
                 tracer.Velocity.sub(tracer.Start);
                 tracer.Velocity.normalize();
-                tracer.Velocity.multiplyScalar(75.0);
+                tracer.Velocity.multiplyScalar(7.5);
                 tracer.Colours = [new THREE.Color(0xd19119), new THREE.Color(0xd19119)];
-                tracer.Length = 10.0;
-                tracer.Life = 1.0;
+                tracer.Length = 25.0;
+                tracer.Life = 2.0;
                 tracer.TotalLife = 1.0;
-                tracer.Width = 0.05;
+                tracer.Width = 0.5;
 
 
 
@@ -241,7 +242,7 @@ export const gun_controller = (() => {
                             victim: mesh.name_,
                             damage: this.damage_
                         }));
-                     
+
                         continue;
                     } else {
                         return  // If obstacl, can't touch zombie behind 
