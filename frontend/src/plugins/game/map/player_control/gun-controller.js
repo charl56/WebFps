@@ -147,11 +147,12 @@ export const gun_controller = (() => {
         UpdateAiming_(input) {
             const camera = this.Parent.parent_.entities_.find((obj) => obj.Name == "threejs").components_.ThreeJSController.camera_;
 
-            if (input.mouseRightReleased()) {   // Click
+            if (input.mouseRightReleased()) {
                 camera.fov = 45
             } else {
                 camera.fov = 90
             }
+            camera.updateProjectionMatrix(); 
         }
 
         Update(timeElapsedS) {
@@ -202,7 +203,6 @@ export const gun_controller = (() => {
                 end.add(this.Parent.Position);
 
                 const offset = new THREE.Vector3(0.1, -0.125, -0.75);
-                // const offset = new THREE.Vector3(1, -1.25, -0.75);
 
                 const tracer = this.blaster_.CreateParticle();
                 // tracer.Start = this.Parent.Position.clone();

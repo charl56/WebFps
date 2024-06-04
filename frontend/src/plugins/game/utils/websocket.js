@@ -91,8 +91,6 @@ export const web_socket = (() => {
             };
 
             document.addEventListener('keyup', (event) => {
-                // this.Broadcast({ topic: 'health.death', });
-
                 if (event.key == 't') {
                     this.openForm();
                 } else if (event.key == 'Enter') {
@@ -180,18 +178,19 @@ export const web_socket = (() => {
         }
 
         addChatMessage(username, message) {
-            const usernameSpan = document.createElement('span');
+            const usernameSpan = document.createElement('p');
             usernameSpan.style.color = '#0fff00';
             usernameSpan.textContent = username;
 
-            const middleSpan = document.createElement('span');
+            const middleSpan = document.createElement('p');
             middleSpan.textContent = ': ';
 
-            const messageSpan = document.createElement('span');
+            const messageSpan = document.createElement('p');
             messageSpan.style.color = '#ffffff';
             messageSpan.textContent = message;
 
-            const content = document.createElement('li');
+            const content = document.createElement('div');
+            content.classList.add('div-chatList');
             content.appendChild(usernameSpan);
             content.appendChild(middleSpan);
             content.appendChild(messageSpan);
@@ -200,18 +199,19 @@ export const web_socket = (() => {
         }
 
         addKillMessage(shooter, killed) {
-            const shooterSpan = document.createElement('span');
+            const shooterSpan = document.createElement('p');
             shooterSpan.textContent = `${shooter}`;
             shooterSpan.style.color = '#00ff00';
 
-            const middleSpan = document.createElement('span');
+            const middleSpan = document.createElement('p');
             middleSpan.textContent = ' ︻┳═一 ';
 
-            const killedSpan = document.createElement('span');
+            const killedSpan = document.createElement('p');
             killedSpan.textContent = killed;
             killedSpan.style.color = '#ff0000';
 
-            const content = document.createElement('li');
+            const content = document.createElement('div');
+            content.classList.add('div-chatList');
             content.style.color = '#ffff00';
             content.style.fontWeight = '500';
 
@@ -224,13 +224,14 @@ export const web_socket = (() => {
         }
 
         addStatusMessage(username, status) {
-            const usernameSpan = document.createElement('span');
+            const usernameSpan = document.createElement('p');
             usernameSpan.textContent = username;
 
-            const statusSpan = document.createElement('span');
+            const statusSpan = document.createElement('p');
             statusSpan.textContent = status;
-
-            const content = document.createElement('li');
+            
+            const content = document.createElement('div');
+            content.classList.add('div-chatList');
             switch (status) {
                 case 'join':
                     content.style.color = '#00ff00';

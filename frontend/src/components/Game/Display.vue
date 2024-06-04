@@ -19,9 +19,7 @@ const sight = new URL('../../assets/Icons/crosshair.png', import.meta.url).href
             </section>
             <!-- Chat input -->
             <div id="inputForm">
-                <form action="">
-                    <input class="chatList" id="inputText" placeholder="Use 'T' to type message.." required />
-                </form>
+                <input class="chatList" id="inputText" placeholder="Use 'T' to type message.." maxlength="50" />
             </div>
         </div>
         <div id="bottom-right" class="div-quart d-flex">
@@ -123,9 +121,15 @@ export default {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    margin: 0px 10px;
+    padding: 5px 10px;
+    font-size: 18px;
+    background-color: #59595954;
+    border-top-right-radius: 10px;
 }
 
+.div-chatList{
+    display: flex;
+}
 
 #healthBar {
     position: absolute;

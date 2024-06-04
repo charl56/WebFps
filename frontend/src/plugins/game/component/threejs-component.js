@@ -100,8 +100,6 @@ export const threejs_component = (() => {
             this.onWindowResize_();
         }
 
-
-
         getMaxAnisotropy() {
             return this.threejs_.capabilities.getMaxAnisotropy();
         }

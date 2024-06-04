@@ -6,9 +6,10 @@
             <p class="my-1">Espace pour sauter</p>
             <p class="my-1">VerMaj pour se baisser</p>
             <p class="my-1">Maj pour sprinter</p>
+            <p><a href="https://charles.studi0426.com/zombie/" >Zombie zolo</a></p>
         </div>
         <div class="mt-10">
-            <form @submit.prevent="login">
+            <form @submit.prevent="login" v-if="!errorServer">
                 <label for="username">Nom d'utilisateur:</label>
                 <input type="text" id="username" v-model="username" class="form-control" required>
                 <p>Choix de la map</p>
@@ -22,7 +23,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary my-5">Se connecter</button>
             </form>
-            <div v-if="error">
+            <div v-if="error || errorServer">
                 <p class="error-message">{{ errorMessage }}</p>
             </div>
         </div>
@@ -40,6 +41,7 @@ export default {
             username: '',
             error: false,
             errorMessage: '',
+            errorServer: false,
             maps: [],
             mapChoosen: null
         }
@@ -50,6 +52,7 @@ export default {
     methods: {
         async login() {
             this.error = false;
+            this.errorServer = false;
             this.errorMessage = '';
 
             if (!this.mapChoosen) {
@@ -72,8 +75,8 @@ export default {
             if (response.status == "success") {
                 this.maps = response.data.data;
             } else {
-                this.error = true;
-                this.errorMessage = response.data.data.message
+                this.errorServer = true;
+                this.errorMessage = 'Mode online not available.';
             }
         }
     },
