@@ -78,6 +78,7 @@ export const gun_controller = (() => {
             this.physics_ = this.FindEntity('physics').GetComponent('AmmoJSController');
             this.threejs_ = this.FindEntity('threejs').GetComponent('ThreeJSController');
             this.blaster_ = this.FindEntity('fx').GetComponent('BlasterSystem');
+            this.camera_ = this.threejs_.camera_;
         }
 
         ChangeWeapon(name) {
@@ -145,14 +146,12 @@ export const gun_controller = (() => {
         }
 
         UpdateAiming_(input) {
-            const camera = this.Parent.parent_.entities_.find((obj) => obj.Name == "threejs").components_.ThreeJSController.camera_;
 
             if (input.mouseRightReleased()) {
-                camera.fov = 45
+                this.aim_ = !this.aim_;
             } else {
-                camera.fov = 90
+                this.aim_ = false
             }
-            camera.updateProjectionMatrix(); 
         }
 
         Update(timeElapsedS) {
@@ -173,6 +172,10 @@ export const gun_controller = (() => {
             if (this.cooldown_ > 0.0 || this.loadTimer_ > 0.0) {
                 return;
             }
+
+
+            this.aim_ ? this.camera_.fov = 45 : this.camera_.fov = 90;
+            this.camera_.updateProjectionMatrix(); 
 
 
             // VIDEO HACK

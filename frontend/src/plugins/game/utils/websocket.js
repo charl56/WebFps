@@ -134,7 +134,7 @@ export const web_socket = (() => {
             const enemy = new entity.Entity();
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
-            this.Manager.Add(enemy, "playerID");
+            this.Manager.Add(enemy, playerID);
 
             enemy.SetPosition(new THREE.Vector3(0, 27, 0));
             enemy.SetActive(false);
