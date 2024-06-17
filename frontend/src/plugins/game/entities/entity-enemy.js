@@ -118,6 +118,7 @@ export const entity_enemy = (() => {
               }
             }
           }
+          console.warn(`Animation not found: ${animName}`);
           return null;
         };
         // Set animations

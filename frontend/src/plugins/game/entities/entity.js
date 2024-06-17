@@ -153,6 +153,7 @@ export const entity = (() => {
     Update(timeElapsed, pass) {
       for (let k in this.components_) {
         const c = this.components_[k];
+        // console.log(c)
         if (c.Pass == pass) {
           c.Update(timeElapsed);
         }
