@@ -21,10 +21,10 @@ const initWebSocket = (http) => {
 
     wss.on('connection', (ws) => {
         // const id = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
-        const lastuSer = userService.lastUser();
-        if(lastuSer === undefined || lastuSer.username === undefined) return
+        const lastUser = userService.lastUser();
+        if(lastUser === undefined || lastUser.username === undefined) return
 
-        const id = lastuSer.username 
+        const id = lastUser.username 
 
         console.log(`${id} is connected`);
 
@@ -32,6 +32,8 @@ const initWebSocket = (http) => {
             position: [0, 0, 0],
             direction: [0, 0, 0],
             health: 100,
+            kills: 0,
+            deaths: 0
         };
 
         broadcast({ type: 'player connect', playerId: id, playerCount: wss.clients.size });
@@ -73,6 +75,8 @@ const initWebSocket = (http) => {
                         players[data.victim].health -= data.damage;
                         if (players[data.victim].health <= 0) {
                             players[data.victim].health = 100;
+                            players[data.victim].deaths++;
+                            players[id].kills++;
                             broadcast({ type: 'kill message', shooter: id, victim: data.victim });
                         }
                     }

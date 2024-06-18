@@ -34,8 +34,9 @@ export const web_socket = (() => {
                 crosshair: null,
             };
         }
-        InitEntity(){
+        InitEntity() {
             console.log("init entity socket")
+            setInterval(() => this.updateScoreTable(), 1000);
         }
 
         InitComponent() {
@@ -138,18 +139,18 @@ export const web_socket = (() => {
 
             enemy.SetPosition(new THREE.Vector3(0, 27, 0));
             enemy.SetActive(false);
-            console.log(enemy)
 
             this.players[playerID] = {};
             this.players[playerID].entity = enemy;
             this.players[playerID].positionSync = new THREE.Vector3();
             this.players[playerID].lookDirection = new THREE.Vector4();
             this.players[playerID].health = 100;
+            this.players[playerID].kills = 0;
+            this.players[playerID].death = 0;
 
         }
 
         updateRemotePlayers(remotePlayers) {
-
             const positionSync = new THREE.Vector3();
             const lookDirection = new THREE.Vector4();
             for (let id in remotePlayers) {
@@ -159,10 +160,14 @@ export const web_socket = (() => {
 
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
+                    this.players[id].kills = remotePlayers[id].kills;
+                    this.players[id].deaths = remotePlayers[id].deaths;
 
                 } else {
                     this.player.health = remotePlayers[id].health;
                     this.player.health <= 0 ? this.player.health = 100 : null
+                    this.player.kills = remotePlayers[id].kills;
+                    this.player.deaths = remotePlayers[id].deaths;
                 }
             }
         }
@@ -229,7 +234,7 @@ export const web_socket = (() => {
 
             const statusSpan = document.createElement('p');
             statusSpan.textContent = status;
-            
+
             const content = document.createElement('div');
             content.classList.add('div-chatList');
             switch (status) {
@@ -293,7 +298,7 @@ export const web_socket = (() => {
         }
 
         closeForm() {
-            document.getElementById('inputForm').style.display = 'none';
+            document.getElementById('inputText').blur();
         }
 
         updateUi() {
@@ -304,6 +309,58 @@ export const web_socket = (() => {
             } catch (error) {
                 console.error('Error updating UI:', error);
             }
+        }
+
+        updateScoreTable() {
+            // Collect scores
+            const scores = [];
+            scores.push({
+                id: this.player.id,
+                kills: this.player.kills || 0,
+                deaths: this.player.deaths || 0
+            });
+
+            for (let id in this.players) {
+                scores.push({
+                    id: id,
+                    kills: this.players[id].kills || 0,
+                    deaths: this.players[id].deaths || 0
+                });
+            }
+
+            // Sort scores by kills in descending order
+            scores.sort((a, b) => b.kills - a.kills);
+
+            // Create HTML content for the scores
+            const scoreTable = document.getElementById('score-table');
+            scoreTable.innerHTML = ''; // Clear previous content
+
+            scores.forEach(player => {
+                const playerRow = document.createElement('div');
+                playerRow.classList.add('score-row');
+
+                const playerId = document.createElement('span');
+                playerId.classList.add('player-id');
+                playerId.textContent = player.id;
+
+                const playerKills = document.createElement('span');
+                playerKills.classList.add('player-kills');
+                playerKills.textContent = `Kills: ${player.kills}`;
+
+                const playerDeaths = document.createElement('span');
+                playerDeaths.classList.add('player-deaths');
+                playerDeaths.textContent = `Deaths: ${player.deaths}`;
+
+                playerRow.appendChild(playerId);
+                playerRow.appendChild(playerKills);
+                playerRow.appendChild(playerDeaths);
+
+                scoreTable.appendChild(playerRow);
+            });
+
+
+            // Faire liste players + players, avec zttriubts kills et deaths
+            // Afficher la liste sur le front
         }
 
         Update(timeElapsedS) {

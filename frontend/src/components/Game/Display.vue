@@ -9,6 +9,9 @@ const sight = new URL('../../assets/Icons/crosshair.png', import.meta.url).href
         <div id="div-msg-spawn">
             <p class="msg-spawn">Press 'space' to spawn</p>
         </div>
+        <div id="score-table">
+
+        </div>
         <div id="top-left" class="div-quart"></div>
         <div id="top-right" class="div-quart"></div>
         <div id="bottom-left" class="div-quart">
@@ -85,6 +88,33 @@ export default {
     width: 40px;
 }
 
+/* Score table */
+#score-table {
+    width: 300px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    top: 0;
+    position: absolute;
+}
+
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px;
+    border-bottom: 1px solid #eee;
+}
+
+.player-id {
+    flex: 1;
+}
+
+.player-kills,
+.player-deaths {
+    flex: 1;
+    text-align: right;
+}
+
+
 /* Parts */
 .div-quart {
     position: absolute;
@@ -127,7 +157,7 @@ export default {
     border-top-right-radius: 10px;
 }
 
-.div-chatList{
+.div-chatList {
     display: flex;
 }
 
