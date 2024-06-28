@@ -1,9 +1,9 @@
 <template>
-  <v-app id="app">
-      <Presentation v-if="presentation" />
-      <!-- Jeu -->
-      <Game v-else />
-  </v-app>
+    <v-app>
+        <Presentation v-if="presentation" />
+        <!-- Jeu -->
+        <Game v-else />
+    </v-app>
 </template>
 
 <script>
@@ -13,61 +13,66 @@ import Presentation from './components/Presentation/Presentation.vue'
 import { eventBus } from './plugins/eventBus'
 
 export default {
-  name: 'App',
-  components: {
-    Presentation,
-    Game,
-  },
-  created(){
-    if(import.meta.env.DEV){  // Permet de ne pas avoir les message en mode dev
-      this.presentation = true
-    }
-    
+    name: 'App',
+    components: {
+        Presentation,
+        Game,
+    },
+    created() {
+        if (import.meta.env.DEV) {  // Permet de ne pas avoir les message en mode dev
+            this.presentation = true
+        }
 
-    eventBus.on("startGame", () => {
-      this.presentation = false
-    })
-  },
-  data(){
-    return {
-      presentation: true,
+
+        eventBus.on("startGame", () => {
+            this.presentation = false
+        })
+    },
+    data() {
+        return {
+            presentation: true,
+        }
     }
-  }
 }
 </script>
 
 <style>
+:root {
+    --background-color: #ffffff;
+    --text-selection: #7eb3e8;
+    --text-color: #6ab4ff;
+}
+
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 html::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 html {
-  margin: 0;
-  height: 100%;
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  background-color: #ffffff;
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+    margin: 0;
+    height: 100%;
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--background-color);
+    color: var(--text-color) !important;
+    font-family: system-ui !important;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
 }
-#app {
-  font-family: Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  background-color: #ffffff !important;
-}
+
 /* Surlignage du texte */
-::selection{
-  background-color: #ffffff;
-  color: #7eb3e8;
+::selection {
+    background-color: var(--background-color);
+    color: var(--text-selection);
 }
-::-moz-selection{
-  background-color: #ffffff;
-  color: #2c3e50;
+
+::-moz-selection {
+    background-color: var(--background-color);
+    color: var(--text-selection);
 }
 </style>

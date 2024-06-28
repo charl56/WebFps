@@ -1,5 +1,6 @@
 <script setup>
 const sight = new URL('../../assets/Icons/crosshair.png', import.meta.url).href
+const movementLogo = new URL('../../assets/Icons/movementLogo.png', import.meta.url).href
 </script>
 <template>
     <div class="div-display d-flex align-center justify-center">
@@ -8,6 +9,8 @@ const sight = new URL('../../assets/Icons/crosshair.png', import.meta.url).href
         </div>
         <div id="div-msg-spawn">
             <p class="msg-spawn">Press 'space' to spawn</p>
+            <v-img class="msg-spawn" :src="movementLogo"></v-img>
+
         </div>
         <div id="score-table">
 
@@ -95,6 +98,7 @@ export default {
     border-bottom-left-radius: 5px;
     top: 0;
     position: absolute;
+    font-family: cursive;
 }
 
 .score-row {
@@ -148,6 +152,7 @@ export default {
 
 
 .chatList {
+    font-family: cursive !important;
     display: flex;
     align-items: flex-start;
     flex-direction: column;

@@ -357,10 +357,6 @@ export const web_socket = (() => {
 
                 scoreTable.appendChild(playerRow);
             });
-
-
-            // Faire liste players + players, avec zttriubts kills et deaths
-            // Afficher la liste sur le front
         }
 
         Update(timeElapsedS) {
