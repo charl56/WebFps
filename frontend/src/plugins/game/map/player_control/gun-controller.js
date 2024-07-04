@@ -93,7 +93,7 @@ export const gun_controller = (() => {
                 emissive: new THREE.Color(0x000000),
                 color: new THREE.Color(0xFFFFFF),
             }));
-            this.Manager.Add(e);
+            this.Manager.Add(e, 'renderWeapon');
             e.SetPosition(new THREE.Vector3(0.1, -0.25, -0.1));
             e.SetActive(false);
 

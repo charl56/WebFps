@@ -28,7 +28,7 @@ export const map_builder = (() => {
             // Floor for spawn
             const s = new entity.Entity();
             s.AddComponent("BasicRigidBody", new basic_rigid_body.BasicRigidBody({ box: new THREE.Vector3(100, 2, 100) }));
-            this.Manager.Add(s);
+            this.Manager.Add(s, 'invisibleTop');
             s.SetPosition(new THREE.Vector3(0, 23, 0));
             s.SetActive(false);
 

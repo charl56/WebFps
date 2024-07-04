@@ -35,12 +35,10 @@ export const web_socket = (() => {
             };
         }
         InitEntity() {
-            console.log("init entity socket")
             setInterval(() => this.updateScoreTable(), 1000);
         }
 
         InitComponent() {
-            console.log('init socket');
             const backendAddress = import.meta.env.VITE_BACK_WS || "ws://127.0.0.1:3000/" // WebSocket address
             this.socket = new WebSocket(backendAddress);
 
@@ -135,6 +133,7 @@ export const web_socket = (() => {
             const enemy = new entity.Entity();
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
+            console.log("add to manager : ", playerID)
             this.Manager.Add(enemy, playerID);
 
             enemy.SetPosition(new THREE.Vector3(0, 27, 0));
