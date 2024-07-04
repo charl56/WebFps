@@ -146,12 +146,14 @@ export const gun_controller = (() => {
         }
 
         UpdateAiming_(input) {
+            const camera = this.Parent.parent_.entities_.find((obj) => obj.Name == "threejs").components_.ThreeJSController.camera_;
 
             if (input.mouseRightReleased()) {
-                this.aim_ = !this.aim_;
+                camera.fov = 45
             } else {
-                this.aim_ = false
+                camera.fov = 90
             }
+            camera.updateProjectionMatrix();
         }
 
         Update(timeElapsedS) {
@@ -165,6 +167,7 @@ export const gun_controller = (() => {
 
             this.cooldown_ -= timeElapsedS;
             this.loadTimer_ -= timeElapsedS;
+
             this.UpdateAiming_(input);  // Update : aim or not
             this.UpdateGunRecoil_();    // Recoil at fire
 
@@ -172,11 +175,6 @@ export const gun_controller = (() => {
             if (this.cooldown_ > 0.0 || this.loadTimer_ > 0.0) {
                 return;
             }
-
-
-            this.aim_ ? this.camera_.fov = 45 : this.camera_.fov = 90;
-            this.camera_.updateProjectionMatrix(); 
-
 
             // VIDEO HACK
             const fired = input.mouseLeftReleased();
