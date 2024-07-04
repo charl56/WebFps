@@ -10,7 +10,7 @@ export default {
         return {
             options: {
                 background: {
-                    color: "#000", // this sets a background color for the canvas
+                    color: "#999", // this sets a background color for the canvas
                 },
                 fullScreen: {
                     enable: true, // enabling this will make the canvas fill the entire screen, it's enabled by default
@@ -26,10 +26,11 @@ export default {
                             enable: true, // enables the mouse hover event, it's disabled by default
                             mode: "repulse", // repulse the particles on mouse hover
                         },
+                        resize: true
                     },
                     modes: {
                         push: {
-                            quantity: 10, // number of particles to add on click
+                            quantity: 8, // number of particles to add on click
                         },
                         repulse: {
                             distance: 150, // distance of the particles from the cursor
@@ -37,10 +38,17 @@ export default {
                     },
                 },
                 particles: {
+                    color: {
+                        value: "#000", // change particle color to black
+                    },
                     links: {
                         distance: 150, // maximum distance for linking the particles
                         enable: true, // enabling this will make the particles linked together
+                        color: "#fff",
+                        opacity: 0.5,
+                        width: 1
                     },
+                    collisions: true,
                     move: {
                         enable: true, // enabling this will make particles move in the canvas
                         speed: { min: 0.1, max: 5 }, // using a range in speed value will make particles move in a random speed between min/max values, each particle has its own value, it won't change over time by default

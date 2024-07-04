@@ -19,9 +19,9 @@
                         <p>{{ map.nbplayer }} / {{ map.quantity }}</p>
                     </div>
                 </div>
-            </div>
-            <div v-if="error">
-                <p class="error-message">{{ errorMessage }}</p>
+                <div v-if="errorMessage">
+                    <p class="error-message">{{ errorMessage }}</p>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary my-5">Jouer</button>
         </form>
