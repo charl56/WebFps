@@ -30,7 +30,6 @@ export const player = (() => {
             this.respawnZone = new THREE.Vector3(0, 27, 0);
         }
         InitEntity(){
-            console.log("init player")
         }
 
         InitComponent() {
