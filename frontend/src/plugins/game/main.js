@@ -13,6 +13,14 @@ import { player } from './map/player.js';
 import { web_socket } from './utils/websocket.js';
 // Gun effect
 import { blaster } from './fx/blaster.js';
+// Player 
+import { player_input } from './map/player_control/player-input.js';
+import { first_person_camera } from './map/player_control/first-person-camera.js';
+import { kinematic_character_controller } from './map/player_control/kinematic-character-controller.js';
+import { gun_controller } from './map/player_control/gun-controller.js';
+import { display } from './fx/display.js'
+import { health_component } from './map/player_control/health-component.js';
+
 // Show FPS
 import Stats from 'stats.js'
 let stats = new Stats()
@@ -88,8 +96,14 @@ export class QuickFPS1 {
 
         // Player
         const playerSpawner = new entity.Entity();
-        this.entityManager_.Add(playerSpawner, 'playerSpawner');
+        playerSpawner.AddComponent("PlayerInput", new player_input.PlayerInput());                                       // Input player (move, shoot, jump, pause...)
+        playerSpawner.AddComponent("FirstPersonCamera", new first_person_camera.FirstPersonCamera(basicParams));                          // Move camera on player
+        playerSpawner.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(basicParams));    // Set "physical body" to player
+        playerSpawner.AddComponent("GunController", new gun_controller.GunController(basicParams))                                    // Setup weapon with name (for sound and display)
+        playerSpawner.AddComponent("Displays", new display.Displays(basicParams));                                                // Crosshair
+        playerSpawner.AddComponent("HealthComponent", new health_component.HealthComponent({ health: 100, maxHealth: 100, updateUI: true, isItMe: true }));
         playerSpawner.AddComponent("Player", new player.Player(basicParams));
+        this.entityManager_.Add(playerSpawner, 'player');
     }
 
     RAF_() {

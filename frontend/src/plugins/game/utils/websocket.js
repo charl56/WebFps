@@ -179,7 +179,7 @@ export const web_socket = (() => {
 
         deathTrigger() {
             this.Broadcast({ topic: 'health.death', });
-            this.FindEntity('playerSpawner').GetComponent('Player').OnDeath();
+            this.FindEntity('player').GetComponent('Player').OnDeath();
         }
 
         addChatMessage(username, message) {
