@@ -16,5 +16,5 @@ const mapList = [
 
 module.exports = {
     Map,
-    mapList,
+    mapList
 };

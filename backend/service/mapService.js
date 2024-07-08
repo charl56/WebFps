@@ -1,5 +1,5 @@
 // mapService.js
-const mapList = require('../models/mapModel');
+const { Map, mapList } = require('../models/mapModel');
 const userService = require('../service/userService');
 
 exports.getAllMaps = () => mapList.map(map => ({ ...map }));
