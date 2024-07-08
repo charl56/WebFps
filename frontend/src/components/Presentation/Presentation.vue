@@ -8,7 +8,7 @@
                 <label for="username">Pseudo :</label>
                 <input type="text" id="username" v-model="username" class="form-control" required>
 
-                <p class="mt-5">Choix de la map</p>
+                <p class="mt-5 text-h6">Choix de la map</p>
                 <div class="btn-map w-100">
                     <div v-for="(map, index) in maps" :key="index" class="btn-map-input"
                         :class="{ 'map-available': map.availability, 'map-not-available': !map.availability || map.nbplayer == map.quantity, 'selected': mapChoosen && mapChoosen.name === map.name }">
@@ -19,11 +19,13 @@
                         <p>{{ map.nbplayer }} / {{ map.quantity }}</p>
                     </div>
                 </div>
-                <p class="mt-5">Choix du skin</p>
-                <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
-                    <input type="radio" :id="'skin' + index" :value="skin" v-model="selectedSkin"
-                        class="form-check-input">
-                    <label :for="'skin' + index" class="form-check-label">{{ skin }}</label>
+                <p v-if="mapChoosen != null" class="mt-5 text-h6">Choix du skin</p>
+                <div v-if="mapChoosen != null" class="btn-map w-100">
+                    <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
+                        <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
+                            class="form-check-input" :disabled="!skin.available">
+                        <label :for="'skin' + index" class="form-check-label">{{ skin.name }}</label>
+                    </div>
                 </div>
                 <div v-if="errorMessage">
                     <p class="error-message">{{ errorMessage }}</p>
@@ -61,7 +63,6 @@ export default {
         }
     },
     mounted() {
-        this.skinNames = Object.keys(skins);
         this.checkMaps();
     },
     methods: {
@@ -95,8 +96,19 @@ export default {
                 this.errorMessage = 'Multi not available.';
             }
         },
-        selectMap(map) {
+        async selectMap(map) {
             this.mapChoosen = map;
+            const response = await sendRequest('GET', `maps/${map.name}`);
+            if (response.status == "success") {
+                const usedSkins = response.data.data.users.map(user => user.skin);
+                this.skinNames = Object.keys(skins).map(skin => ({
+                    name: skin,
+                    available: !usedSkins.includes(skin)
+                }));
+            } else {
+                this.errorServer = true;
+                this.errorMessage = 'Skins not found.';
+            }
         }
     },
 }

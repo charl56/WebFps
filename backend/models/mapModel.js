@@ -7,6 +7,7 @@ class Map {
         this.quantity = quantity;
         this.nbplayer = nbplayer;
         this.availability = availability;
+        this.users = []; 
     }
 }
 
@@ -16,15 +17,21 @@ const mapList = [
 ];
 
 exports.getAll = () => mapList.map(map => ({...map }));
+exports.getByName = (mapName) => {
+    console.log("getname : ", mapList.find(map => map.name === mapName))
+    return mapList.find(map => map.name === mapName);
+};
 
-exports.incrementPlayerCount = (mapName) => {
+exports.incrementPlayerCount = (mapName, username, skin) => {
     const map = mapList.find(map => map.name === mapName);
     if (map && map.availability && map.nbplayer < map.quantity) {
         map.nbplayer += 1;
+        map.users.push({ username, skin });
     } else {
         throw new Error('Map not found or not available');
     }
 };
+
 
 exports.decrementPlayerCount = (username) => {
     const userList = userModel.getAll()
@@ -36,6 +43,7 @@ exports.decrementPlayerCount = (username) => {
 
         if (map && map.nbplayer > 0) {
             map.nbplayer -= 1;
+            map.users = map.users.filter(u => u.username !== username);
             userList.splice(userIndex, 1);
         }
     }
