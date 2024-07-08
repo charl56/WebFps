@@ -6,8 +6,7 @@
             class="d-flex flex-column justify-space-around py-10 h-screen w-25">
             <div>
                 <label for="username">Pseudo :</label>
-                <input type="text" id="username" v-model="username" class="form-control" required>
-
+                <input type="text" id="username" v-model="username" class="form-control" required />
                 <p class="mt-5 text-h6">Choix de la map</p>
                 <div class="btn-map w-100">
                     <div v-for="(map, index) in maps" :key="index" class="btn-map-input"
@@ -23,7 +22,7 @@
                 <div v-if="mapChoosen != null" class="btn-map w-100">
                     <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
                         <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
-                            class="form-check-input" :disabled="!skin.available">
+                            class="form-check-input" :disabled="!skin.available" />
                         <label :for="'skin' + index" class="form-check-label">{{ skin.name }}</label>
                     </div>
                 </div>
@@ -47,9 +46,7 @@ import skins from '../../../static/datas/targetItems.js';
 
 export default {
     name: 'AppPresentation',
-    components: {
-        CustomeParticles,
-    },
+    components: { CustomeParticles },
     data() {
         return {
             username: '',
@@ -63,56 +60,75 @@ export default {
         }
     },
     mounted() {
-        this.checkMaps();
+        this.fetchMaps();
     },
     methods: {
         async login() {
-            this.error = false;
-            this.errorServer = false;
-            this.errorMessage = '';
+            this.clearErrors();
 
             if (!this.mapChoosen) {
-                this.error = true;
-                this.errorMessage = 'Please select a map.';
+                this.setError('Please select a map.');
                 return;
             }
 
-            const response = await sendRequest('POST', 'login', { username: this.username, map: this.mapChoosen.name, skin: this.selectedSkin });
-            if (response.status == "success") {
-                localStorage.setItem('mapChoosen', this.mapChoosen.name)
-                localStorage.setItem('userSkin', this.selectedSkin)
-                eventBus.emit("startGame")
+            const response = await sendRequest('POST', 'login', {
+                username: this.username,
+                map: this.mapChoosen.name,
+                skin: this.selectedSkin
+            });
+
+            if (response.status === "success") {
+                this.storeUserData();
+                eventBus.emit("startGame");
             } else {
-                this.error = true;
-                this.errorMessage = response.data.data.message
+                this.setError(response.data.data.message);
             }
         },
-        async checkMaps() {
+        async fetchMaps() {
             const response = await sendRequest('GET', 'maps');
-            if (response.status == "success") {
+            if (response.status === "success") {
                 this.maps = response.data.data;
             } else {
-                this.errorServer = true;
-                this.errorMessage = 'Multi not available.';
+                this.setServerError('Multi not available.');
             }
         },
         async selectMap(map) {
             this.mapChoosen = map;
             const response = await sendRequest('GET', `maps/${map.name}`);
-            if (response.status == "success") {
-                const usedSkins = response.data.data.users.map(user => user.skin);
-                this.skinNames = Object.keys(skins).map(skin => ({
-                    name: skin,
-                    available: !usedSkins.includes(skin)
-                }));
+            if (response.status === "success") {
+                this.updateSkinNames(response.data.data.users);
             } else {
-                this.errorServer = true;
-                this.errorMessage = 'Skins not found.';
+                this.setServerError('Skins not found.');
             }
+        },
+        updateSkinNames(users) {
+            const usedSkins = new Set(users.map(user => user.skin));
+            this.skinNames = Object.keys(skins).map(skin => ({
+                name: skin,
+                available: !usedSkins.has(skin)
+            }));
+        },
+        storeUserData() {
+            localStorage.setItem('mapChoosen', this.mapChoosen.name);
+            localStorage.setItem('userSkin', this.selectedSkin);
+        },
+        clearErrors() {
+            this.error = false;
+            this.errorServer = false;
+            this.errorMessage = '';
+        },
+        setError(message) {
+            this.error = true;
+            this.errorMessage = message;
+        },
+        setServerError(message) {
+            this.errorServer = true;
+            this.errorMessage = message;
         }
-    },
+    }
 }
 </script>
+
 
 <style scoped>
 .presentation-div {
@@ -150,7 +166,6 @@ export default {
     }
 }
 
-
 .btn-primary:hover {
     background-color: rgba(255, 255, 255, 0.123);
     animation: size-animation 1.5s infinite;
@@ -158,15 +173,15 @@ export default {
 
 @keyframes size-animation {
     0% {
-        scale: 1;
+        transform: scale(1);
     }
 
     30% {
-        scale: 1.05;
+        transform: scale(1.05);
     }
 
     100% {
-        scale: 1;
+        transform: scale(1);
     }
 }
 
@@ -179,11 +194,9 @@ export default {
     color: white;
 }
 
-
 .btn-map {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
     justify-content: space-between;
     margin-top: 20px;
 }
@@ -221,7 +234,6 @@ export default {
     transform: scale(1.05);
 }
 
-
 .map-not-available:hover {
     transform: scale(1);
 }
@@ -236,10 +248,5 @@ export default {
     color: #f44336;
     font-size: 14px;
     margin-top: 10px;
-}
-
-
-.img-movement {
-    width: 200px;
 }
 </style>

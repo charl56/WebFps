@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
-const userService = require('../models/userModel');
-const mapService = require('../models/mapModel');
+const userService = require('../service/userService');
+const mapService = require('../service/mapService');
 
 const initWebSocket = (http) => {
     const wss = new WebSocket.Server({ server: http });
@@ -21,7 +21,7 @@ const initWebSocket = (http) => {
 
     wss.on('connection', (ws) => {
         // const id = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
-        const lastUser = userService.lastUser();
+        const lastUser = userService.getLastUser();
         if(lastUser === undefined || lastUser.username === undefined) return
 
         const id = lastUser.username 

@@ -9,11 +9,7 @@ class User {
 
 const userList = [];
 
-exports.getAll = () => userList;
-exports.findByName = (username) => userList.find(user => user.username === username);
-exports.lastUser = () => userList[userList.length - 1];
-exports.create = (username, mapName, skin) => {
-    const newUser = new User(username, userList.length + 1, mapName, skin);
-    userList.push(newUser);
-    return newUser;
+module.exports = {
+    User,
+    userList,
 };

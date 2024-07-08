@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const mapsRouter = require('./controllers/mapsController');
-const loginRouter = require('./controllers/loginController');
+const usersRouter = require('./controllers/userController');
 const app = express();
 
 const http = require('http').Server(app);
@@ -10,7 +10,7 @@ const http = require('http').Server(app);
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 app.use(mapsRouter); // Use maps routes
-app.use(loginRouter); // Use login routes
+app.use(usersRouter); // Use login routes
 
 // Import and attach the socket handler
 const initSocketIO = require('./utils/socketHandler');

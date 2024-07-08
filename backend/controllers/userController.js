@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const userService = require('../models/userModel');
-const mapService = require('../models/mapModel');
+const userService = require('../service/userService');
+const mapService = require('../service/mapService');
 
 router.post('/login', async (req, res) => {
     try {
@@ -9,11 +9,11 @@ router.post('/login', async (req, res) => {
         if (!username) {
             return res.status(400).json({ message: 'Username is required.' });
         }
-        const existingUser = await userService.findByName(username);
+        const existingUser = await userService.findUserByName(username);
         if (existingUser) {
             return res.status(400).json({ message: 'Username already exists. Please choose another username.' });
         }
-        const newUser = await userService.create(username, map, skin);
+        const newUser = await userService.createUser(username, map, skin);
         mapService.incrementPlayerCount(map, username, skin);
 
         res.status(200).json({ message: 'User created successfully.', user: newUser });
