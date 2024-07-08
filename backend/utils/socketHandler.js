@@ -33,12 +33,13 @@ const initWebSocket = (http) => {
             direction: [0, 0, 0],
             health: 100,
             kills: 0,
-            deaths: 0
+            deaths: 0,
+            skin: lastUser.skin
         };
 
-        broadcast({ type: 'player connect', playerId: id, playerCount: wss.clients.size });
+        broadcast({ type: 'player connect', playerId: id, playerCount: wss.clients.size, skin: players[id].skin });
 
-        ws.send(JSON.stringify({ type: 'initPlayer', playerId:id, playerCount: wss.clients.size, players: Object.keys(players) }));
+        ws.send(JSON.stringify({ type: 'initPlayer', playerId:id, playerCount: wss.clients.size, players: players }));
 
         ws.on('close', () => {
             console.log(`${id} is disconnected`);

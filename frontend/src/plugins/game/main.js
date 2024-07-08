@@ -95,15 +95,15 @@ export class QuickFPS1 {
         this.entityManager_.Add(websocket, 'websocket');
 
         // Player
-        const playerSpawner = new entity.Entity();
-        playerSpawner.AddComponent("PlayerInput", new player_input.PlayerInput());                                       // Input player (move, shoot, jump, pause...)
-        playerSpawner.AddComponent("FirstPersonCamera", new first_person_camera.FirstPersonCamera(basicParams));                          // Move camera on player
-        playerSpawner.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(basicParams));    // Set "physical body" to player
-        playerSpawner.AddComponent("GunController", new gun_controller.GunController(basicParams))                                    // Setup weapon with name (for sound and display)
-        playerSpawner.AddComponent("Displays", new display.Displays(basicParams));                                                // Crosshair
-        playerSpawner.AddComponent("HealthComponent", new health_component.HealthComponent({ health: 100, maxHealth: 100, updateUI: true, isItMe: true }));
-        playerSpawner.AddComponent("Player", new player.Player(basicParams));
-        this.entityManager_.Add(playerSpawner, 'player');
+        const playerEntity = new entity.Entity();
+        playerEntity.AddComponent("PlayerInput", new player_input.PlayerInput());                                       // Input player (move, shoot, jump, pause...)
+        playerEntity.AddComponent("FirstPersonCamera", new first_person_camera.FirstPersonCamera(basicParams));                          // Move camera on player
+        playerEntity.AddComponent("KinematicCharacterController", new kinematic_character_controller.KinematicCharacterController(basicParams));    // Set "physical body" to player
+        playerEntity.AddComponent("GunController", new gun_controller.GunController(basicParams))                                    // Setup weapon with name (for sound and display)
+        playerEntity.AddComponent("Displays", new display.Displays(basicParams));                                                // Crosshair
+        playerEntity.AddComponent("HealthComponent", new health_component.HealthComponent({ health: 100, maxHealth: 100, updateUI: true, isItMe: true }));
+        playerEntity.AddComponent("Player", new player.Player(basicParams));
+        this.entityManager_.Add(playerEntity, 'player');
     }
 
     RAF_() {
@@ -129,7 +129,7 @@ export class QuickFPS1 {
         const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
         // Update entities, AmmoJs part & ThreeJs part
         this.entityManager_.Update(timeElapsedS);
-        console.log(this.entityManager_)
+        // console.log(this.entityManager_)
         this.ammojs_.StepSimulation(timeElapsedS);
         this.threejs_.Render(timeElapsedS);
     }

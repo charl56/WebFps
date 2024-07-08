@@ -59,8 +59,21 @@ let skins = {
         },
         scale: 1,       
     },
-
-    
+    Kimono_Female: {
+        gltf: './static/Models/Animated_Character/glTF/Kimono_Female.gltf',  
+        mesh: null,                                
+        position: {          
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        rotation: {              
+            x: 0,
+            y: 0,
+            z: 0,
+        },
+        scale: 1,       
+    },
 }
 
 export default skins

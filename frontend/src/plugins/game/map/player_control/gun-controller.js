@@ -243,6 +243,7 @@ export const gun_controller = (() => {
                             victim: mesh.name_,
                             damage: this.damage_
                         }));
+                        this.Broadcast({ topic: 'health.update', });
 
                         continue;
                     } else {

@@ -89,8 +89,6 @@ export const kinematic_character_controller = (() => {
         }
 
         Update(timeInSeconds) {
-            console.log("Enemy : ", this.Parent.Position.y)
-
         }
 
     };

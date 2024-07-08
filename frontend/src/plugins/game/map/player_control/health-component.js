@@ -82,6 +82,7 @@ export const health_component = (() => {
     }
 
     OnDeath_() {
+      console.log("death health vcomponent")
       this.Broadcast({topic: 'health.death',});
     }
 

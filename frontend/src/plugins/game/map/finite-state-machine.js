@@ -16,6 +16,10 @@ export const finite_state_machine = (() => {
       return this._currentState.Name;
     }
 
+    GetState(){
+      return this._currentState.Name;
+    }
+
     SetState(name) {
       const prevState = this._currentState;
       

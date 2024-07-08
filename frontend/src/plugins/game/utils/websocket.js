@@ -53,7 +53,7 @@ export const web_socket = (() => {
                         this.updateRemotePlayers(data.players);
                         break;
                     case 'player connect':
-                        this.handlePlayerConnect(data.playerId);
+                        this.handlePlayerConnect(data);
                         break;
                     case 'player disconnect':
                         this.handlePlayerDisconnect(data.playerId, data.playerCount);
@@ -72,11 +72,12 @@ export const web_socket = (() => {
                     case 'initPlayer':
                         this.player.id = data.playerId;
                         this.player.health = 100;
+                        const players = Object.keys(data.players)
 
                         // Check all that isn't local player
                         for (let i = 0; i < data.playerCount; i++) {
-                            if (data.players[i] !== this.player.id) {
-                                this.initRemotePlayer(data.players[i]);
+                            if (players[i] !== this.player.id) {
+                                this.initRemotePlayer(players[i], data.players[players[i]].skin);
                             }
                         }
                         break;
@@ -114,14 +115,15 @@ export const web_socket = (() => {
             // console.log('WebSocket connected');
         }
 
-        handlePlayerConnect(playerId) {
+        handlePlayerConnect(data) {
 
             if (this.player.id === undefined) return;    // Because this function can be call before player init
 
-            if (playerId !== this.player.id) {
-                this.initRemotePlayer(playerId);
+            if (data.playerId !== this.player.id) {
+                console.log("handle : ", data)
+                this.initRemotePlayer(data.playerId, data.skin);
             }
-            this.addStatusMessage(playerId, 'join');
+            this.addStatusMessage(data.playerId, 'join');
         }
 
         handlePlayerDisconnect(playerId, playerCount) {
@@ -129,34 +131,33 @@ export const web_socket = (() => {
             this.addStatusMessage(playerId, 'leave');
         }
 
-        async initRemotePlayer(playerID) {
+        async initRemotePlayer(playerID, skin) {
             const enemy = new entity.Entity();
-            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params))
+            console.log("new enemy : ", skin)
+            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
-            console.log("add to manager : ", playerID)
             this.Manager.Add(enemy, playerID);
-
-            enemy.SetPosition(new THREE.Vector3(0, 27, 0));
-            enemy.SetActive(false);
-
+            // enemy.SetPosition(new THREE.Vector3(0, 27, 0));
+            // enemy.SetActive(true);
+        
             this.players[playerID] = {};
             this.players[playerID].entity = enemy;
             this.players[playerID].positionSync = new THREE.Vector3();
             this.players[playerID].lookDirection = new THREE.Vector4();
             this.players[playerID].health = 100;
             this.players[playerID].kills = 0;
-            this.players[playerID].death = 0;
-
+            this.players[playerID].deaths = 0;
+            this.players[playerID].isReady = true;
         }
 
         updateRemotePlayers(remotePlayers) {
             const positionSync = new THREE.Vector3();
             const lookDirection = new THREE.Vector4();
             for (let id in remotePlayers) {
-                if (id !== this.player.id) {
+                if (id !== this.player.id && this.players[id].isReady) {
                     positionSync.fromArray(remotePlayers[id].position);
                     lookDirection.fromArray(remotePlayers[id].direction);
-
+                    
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
                     this.players[id].kills = remotePlayers[id].kills;
@@ -172,7 +173,10 @@ export const web_socket = (() => {
         }
 
         deleteRemotePlayer(playerID) {
-            this.scene.remove(this.players[playerID].entity);
+            // console.log("delete : ", playerID)
+            // console.log(this.scene)
+            // console.log(this.players[playerID].entity)
+            this.scene.remove(this.players[playerID].entity);            
             delete this.players[playerID];
         }
 

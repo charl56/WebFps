@@ -19,6 +19,12 @@
                         <p>{{ map.nbplayer }} / {{ map.quantity }}</p>
                     </div>
                 </div>
+                <p class="mt-5">Choix du skin</p>
+                <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
+                    <input type="radio" :id="'skin' + index" :value="skin" v-model="selectedSkin"
+                        class="form-check-input">
+                    <label :for="'skin' + index" class="form-check-label">{{ skin }}</label>
+                </div>
                 <div v-if="errorMessage">
                     <p class="error-message">{{ errorMessage }}</p>
                 </div>
@@ -35,6 +41,7 @@
 import { eventBus } from '../../plugins/eventBus';
 import { sendRequest } from '../../utils/api';
 import CustomeParticles from '../Particles/Particles.vue';
+import skins from '../../../static/datas/targetItems.js';
 
 export default {
     name: 'AppPresentation',
@@ -49,9 +56,12 @@ export default {
             errorServer: false,
             maps: [],
             mapChoosen: null,
+            skinNames: [],
+            selectedSkin: ''
         }
     },
     mounted() {
+        this.skinNames = Object.keys(skins);
         this.checkMaps();
     },
     methods: {
@@ -66,9 +76,10 @@ export default {
                 return;
             }
 
-            const response = await sendRequest('POST', 'login', { username: this.username, map: this.mapChoosen.name });
+            const response = await sendRequest('POST', 'login', { username: this.username, map: this.mapChoosen.name, skin: this.selectedSkin });
             if (response.status == "success") {
                 localStorage.setItem('mapChoosen', this.mapChoosen.name)
+                localStorage.setItem('userSkin', this.selectedSkin)
                 eventBus.emit("startGame")
             } else {
                 this.error = true;
@@ -83,7 +94,7 @@ export default {
                 this.errorServer = true;
                 this.errorMessage = 'Multi not available.';
             }
-        },  
+        },
         selectMap(map) {
             this.mapChoosen = map;
         }
@@ -132,6 +143,7 @@ export default {
     background-color: rgba(255, 255, 255, 0.123);
     animation: size-animation 1.5s infinite;
 }
+
 @keyframes size-animation {
     0% {
         scale: 1;

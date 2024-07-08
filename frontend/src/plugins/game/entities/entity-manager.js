@@ -25,11 +25,9 @@ export const entity_manager = (() => {
 
             if (!n) {
                 n = this._GenerateName();
-                console.log(n)
-                console.log(e)
             }
 
-            this.entitiesMap_[n] = e 
+            this.entitiesMap_[n] = e
 
             this.entities_.push(e);
 
@@ -40,6 +38,19 @@ export const entity_manager = (() => {
         }
 
         Remove(e) {
+            const index = this.entities_.indexOf(e);
+            if (index > -1) {
+                this.entities_.splice(index, 1);
+            }
+
+            const name = e.Name;
+            if (name in this.entitiesMap_) {
+                delete this.entitiesMap_[name];
+            }
+
+            if (typeof e.Destroy === 'function') {
+                e.Destroy();
+            }
         }
 
         SetActive(e, b) {

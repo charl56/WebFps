@@ -5,7 +5,7 @@ const mapService = require('../models/mapModel');
 
 router.post('/login', async (req, res) => {
     try {
-        const { username, map } = req.body;
+        const { username, map, skin } = req.body;
         if (!username) {
             return res.status(400).json({ message: 'Username is required.' });
         }
@@ -13,7 +13,7 @@ router.post('/login', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'Username already exists. Please choose another username.' });
         }
-        const newUser = await userService.create(username, map);
+        const newUser = await userService.create(username, map, skin);
         mapService.incrementPlayerCount(map);
 
         res.status(200).json({ message: 'User created successfully.', user: newUser });
