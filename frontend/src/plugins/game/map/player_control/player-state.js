@@ -247,14 +247,6 @@ export const player_state = (() => {
         return;
       }
   
-      if (input._keys.forward || input._keys.backward) {
-        if (input._keys.shift) {
-          this._parent.SetState('run');
-        }
-        return;
-      }
-  
-      this._parent.SetState('idle');
     }
   };
   
@@ -298,14 +290,6 @@ export const player_state = (() => {
         return;
       }
 
-      if (input._keys.forward || input._keys.backward) {
-        if (!input._keys.shift) {
-          this._parent.SetState('walk');
-        }
-        return;
-      }
-  
-      this._parent.SetState('idle');
     }
   };
   
@@ -340,14 +324,7 @@ export const player_state = (() => {
       if (!input) {
         return;
       }
-  
-      if (input._keys.forward || input._keys.backward) {
-        this._parent.SetState('walk');
-      } else if (input._keys.space) {
-        this._parent.SetState('attack');
-      } else if (input._keys.backspace) {
-        this._parent.SetState('dance');
-      }
+
     }
   };
 
@@ -383,13 +360,6 @@ export const player_state = (() => {
         return;
       }
   
-      if (input._keys.forward || input._keys.backward) {
-        this._parent.SetState('walk');
-      } else if (input._keys.space) {
-        this._parent.SetState('attack');
-      } else if (input._keys.backspace) {
-        this._parent.SetState('dance');
-      }
     }
   };
 
@@ -401,21 +371,16 @@ export const player_state = (() => {
     get Name() {
       return 'recieveHit';
     }
-  
-    Enter(prevState) {
-      this._action = this._parent._proxy.animations['recieveHit'].action;
 
-      this._action.reset();  
-      this._action.setLoop(THREE.LoopOnce, 1);
-      this._action.clampWhenFinished = true;
+    Enter(prevState) {
+      const recieveHitAction = this._parent._proxy.animations['recieveHit'].action;
 
       if (prevState) {
         const prevAction = this._parent._proxy.animations[prevState.Name].action;
-  
-        this._action.crossFadeFrom(prevAction, 1, true);
-        this._action.play();
+        recieveHitAction.crossFadeFrom(prevAction, 1, true);
+        recieveHitAction.play();
       } else {
-        this._action.play();
+        recieveHitAction.play();
       }
     }
   
@@ -426,14 +391,7 @@ export const player_state = (() => {
       if (!input) {
         return;
       }
-  
-      if (input._keys.forward || input._keys.backward) {
-        this._parent.SetState('walk');
-      } else if (input._keys.space) {
-        this._parent.SetState('attack');
-      } else if (input._keys.backspace) {
-        this._parent.SetState('dance');
-      }
+
     }
   };
 

@@ -63,6 +63,9 @@ export const web_socket = (() => {
                         break;
                     case 'kill message':
                         if (data.shooter) {
+                            if(this.player.id != data.victim){
+                                this.players[data.victim].entity.Broadcast({ topic: 'health.death' });
+                            }
                             this.addKillMessage(data.shooter, data.victim);
                         }
                         if (this.player.id === data.victim) {
@@ -157,12 +160,13 @@ export const web_socket = (() => {
                 if (id !== this.player.id && this.players[id].isReady) {
                     positionSync.fromArray(remotePlayers[id].position);
                     lookDirection.fromArray(remotePlayers[id].direction);
+
+                    // console.log(positionSync)
                     
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
                     this.players[id].kills = remotePlayers[id].kills;
                     this.players[id].deaths = remotePlayers[id].deaths;
-
                 } else {
                     this.player.health = remotePlayers[id].health;
                     this.player.health <= 0 ? this.player.health = 100 : null

@@ -43,6 +43,10 @@ export const entity_enemy = (() => {
             this.params_ = params;
             this.skin_ = skin;
             this.mesh_ = null;
+            this.positionHistory_ = [];
+            this.historyLength_ = 10; // Nombre de positions à conserver
+            this.positionThreshold_ = 0.001; // Seuil de différence pour considérer le mouvement
+
         }
 
         InitEntity() {
@@ -68,39 +72,43 @@ export const entity_enemy = (() => {
         }
 
         OnUpdatePosition_(msg) {
+            msg.value.y -= 2.8;
+
+            this.positionHistory_.unshift(Number(this.group_.position.x.toFixed(4)));
+            if (this.positionHistory_.length > this.historyLength_) {
+                this.positionHistory_.pop();
+            }
+
+            this.checkMovement_(msg.value.x) ? this.stateMachine_.SetState('walk') : this.stateMachine_.SetState('idle')
             this.group_.position.copy(msg.value);
-            this.stateMachine_.State != undefined ? (this.stateMachine_.State != 'walk' ? this.stateMachine_.SetState('walk') : false ) : false 
+        }
+
+        checkMovement_(currentX) {
+            for (let i = 0; i < this.positionHistory_.length; i++) {
+                if (Math.abs(currentX - this.positionHistory_[i]) > this.positionThreshold_) {
+                    return true; // Il y a du mouvement
+                }
+            }
+            return false; // Pas de mouvement
         }
 
         OnUpdateRotation_(msg) {
-            if(this.stateMachine_){
-                this.group_.quaternion.copy(msg.value);
-                this.stateMachine_.State != 'walk' ? this.stateMachine_.SetState('walk') : false
-            }
+            this.group_.quaternion.copy(msg.value);
         }
 
         OnDeath_(msg) {
-            if(this.stateMachine_){
-                console.log("moooorrtt")
-                this.stateMachine_.SetState('death');
-            }
+            this.stateMachine_.SetState('death');
         }
 
 
         OnHit_(msg) {
-            if(this.stateMachine_){
-                console.log("on hit")
-                this.stateMachine_.SetState('recieveHit');
-            }
+            this.stateMachine_.SetState('recieveHit');
         }
 
         async LoadModels_() {
-            const skinNames = Object.keys(skins);
             const enemyGltf = skins[this.skin_];
-            console.log("this.skin_ : ", this.skin_)
-            console.log("enemyGltf : ", enemyGltf)
-
             const gltfLoader = new GLTFLoader();
+
             gltfLoader.load(enemyGltf.gltf, (gltf) => {
                 // Mesh
                 this.mesh_ = gltf.scene
@@ -155,7 +163,6 @@ export const entity_enemy = (() => {
         }
 
         Update(timeInSeconds) {
-            // console.log("EntityEnemy => this.group_.position.y : ", this.group_.position.y)
             if (!this.stateMachine_) {
                 return;
             }

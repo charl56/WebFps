@@ -78,13 +78,14 @@ export const kinematic_character_controller = (() => {
             this.RegisterHandler_('update.position', (m) => { this.OnPosition_(m); });
         }
 
-        OnPosition_(m) {
-            const pos = this.Parent.Position;
+        OnPosition_(msg) {
+            // const pos = this.Parent.Position;
+            const pos = msg.value;
             const t = this.body_.transform_;
 
             this.body_.body_.getWorldTransform(t);
 
-            t.getOrigin().setValue(pos.x, pos.y, pos.z);
+            t.getOrigin().setValue(pos.x, pos.y + 8, pos.z);
             this.body_.body_.setWorldTransform(t);
         }
 

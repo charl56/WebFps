@@ -54,7 +54,7 @@ export const first_person_camera = (() => {
             this.updateHeadBob_(timeElapsedS);      // Head
             this.updateTranslation_(timeElapsedS);  // Camera moving
             this.updatePower_(timeElapsedS);        // Speed 
-            this.uploadMovementData_(); // Upload movement data to server
+            this.uploadMovementData_();             // Upload movement data to server
 
             this.Parent.SetPosition(this.translation_);
             this.Parent.SetQuaternion(this.rotation_);
@@ -171,6 +171,7 @@ export const first_person_camera = (() => {
 
         uploadMovementData_() {
             if(this.socket.readyState != 1) return
+
             this.socket.send(JSON.stringify({
                 type: 'updateClientPos',
                 position: [
