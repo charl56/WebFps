@@ -70,6 +70,10 @@ export default {
                 this.setError('Please select a map.');
                 return;
             }
+            if (this.selectedSkin == '') {
+                this.setError('Please select a skin.');
+                return;
+            }
 
             const response = await sendRequest('POST', 'login', {
                 username: this.username,
