@@ -80,12 +80,13 @@ export const kinematic_character_controller = (() => {
 
         OnPosition_(msg) {
             // const pos = this.Parent.Position;
+            console.log("msg kinematic : ", msg.value.y)
             const pos = msg.value;
             const t = this.body_.transform_;
 
             this.body_.body_.getWorldTransform(t);
 
-            t.getOrigin().setValue(pos.x, pos.y + 8, pos.z);
+            t.getOrigin().setValue(pos.x, pos.y, pos.z);
             this.body_.body_.setWorldTransform(t);
         }
 

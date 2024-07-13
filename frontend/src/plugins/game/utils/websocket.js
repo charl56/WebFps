@@ -136,12 +136,9 @@ export const web_socket = (() => {
 
         async initRemotePlayer(playerID, skin) {
             const enemy = new entity.Entity();
-            console.log("new enemy : ", skin)
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
             this.Manager.Add(enemy, playerID);
-            // enemy.SetPosition(new THREE.Vector3(0, 27, 0));
-            // enemy.SetActive(true);
         
             this.players[playerID] = {};
             this.players[playerID].entity = enemy;
@@ -161,8 +158,7 @@ export const web_socket = (() => {
                     positionSync.fromArray(remotePlayers[id].position);
                     lookDirection.fromArray(remotePlayers[id].direction);
 
-                    // console.log(positionSync)
-                    
+                    console.log("positionSync.y : ", positionSync.y)
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
                     this.players[id].kills = remotePlayers[id].kills;

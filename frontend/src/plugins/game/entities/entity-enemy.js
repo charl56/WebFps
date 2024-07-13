@@ -72,25 +72,11 @@ export const entity_enemy = (() => {
         }
 
         OnUpdatePosition_(msg) {
-            msg.value.y -= 2.8;
-
-            this.positionHistory_.unshift(Number(this.group_.position.x.toFixed(4)));
-            if (this.positionHistory_.length > this.historyLength_) {
-                this.positionHistory_.pop();
-            }
-
-            this.checkMovement_(msg.value.x) ? this.stateMachine_.SetState('walk') : this.stateMachine_.SetState('idle')
+            console.log("msg entity : ", msg.value.y)
+            // msg.value.y -= 2.8;
             this.group_.position.copy(msg.value);
         }
 
-        checkMovement_(currentX) {
-            for (let i = 0; i < this.positionHistory_.length; i++) {
-                if (Math.abs(currentX - this.positionHistory_[i]) > this.positionThreshold_) {
-                    return true; // Il y a du mouvement
-                }
-            }
-            return false; // Pas de mouvement
-        }
 
         OnUpdateRotation_(msg) {
             this.group_.quaternion.copy(msg.value);
@@ -162,10 +148,32 @@ export const entity_enemy = (() => {
             })
         }
 
+        UpdateAnimations_(){
+            this.positionHistory_.unshift(Number(this.group_.position.x.toFixed(4)));
+            if (this.positionHistory_.length > this.historyLength_) {
+                this.positionHistory_.pop();
+            }
+            console.log(this.group_.position)
+            this.checkMovement_(this.group_.position.x) ? this.stateMachine_.SetState('walk') : this.stateMachine_.SetState('idle')
+        }
+
+        checkMovement_(currentX) {
+            for (let i = 0; i < this.positionHistory_.length; i++) {
+                if (Math.abs(currentX - this.positionHistory_[i]) > this.positionThreshold_) {
+                    return true; // Il y a du mouvement
+                }
+            }
+            return false; // Pas de mouvement
+        }
+
+
         Update(timeInSeconds) {
             if (!this.stateMachine_) {
                 return;
             }
+            
+            this.UpdateAnimations_();
+
             if (this.mixer_) {
                 this.mixer_.update(timeInSeconds);
             }
