@@ -39,11 +39,12 @@ export const entity_enemy = (() => {
     };
 
     class TargetCharacterController extends entity.Component {
-        constructor(params, skin) {
+        constructor(params, skin, playerId) {
             super();
             this.params_ = params;
             this.skin_ = skin;
             this.mesh_ = null;
+            this.playerId_ = playerId;
             this.positionHistory_ = [];
             this.historyLength_ = 5; // Nombre de positions à conserver
             this.positionThreshold_ = 0.001; // Seuil de différence pour considérer le mouvement
@@ -51,7 +52,6 @@ export const entity_enemy = (() => {
         }
 
         InitEntity() {
-            console.log("init entity enemy")
             this.group_ = new THREE.Group();
 
             this.params_.scene.add(this.group_);
@@ -60,12 +60,11 @@ export const entity_enemy = (() => {
             this.Parent.Attributes.Render = {
                 group: this.group_,
             };
-            this.Parent.Attributes.ENEMYPLAYER = true;
+            this.Parent.Attributes.ENEMY_PLAYER = true;
             this.LoadModels_();
         }
 
         InitComponent() {
-            console.log("init component enemy")
             this.RegisterHandler_('health.death', (m) => { this.OnDeath_(m); });
             this.RegisterHandler_('health.update', (m) => { this.OnHit_(m); });
             this.RegisterHandler_('update.position', (m) => { this.OnUpdatePosition_(m); });

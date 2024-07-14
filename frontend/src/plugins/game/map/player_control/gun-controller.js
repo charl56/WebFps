@@ -236,7 +236,7 @@ export const gun_controller = (() => {
                 for (let i = 0; i < hits.length; ++i) {
                     const mesh = this.FindEntity(hits[i].name);
 
-                    if (mesh.Attributes.ENEMYPLAYER) {
+                    if (mesh.Attributes.ENEMY_PLAYER) {
                         // Emit spcket
                         this.socket_.send(JSON.stringify({
                             type: 'updateClientHealth',

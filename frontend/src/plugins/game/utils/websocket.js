@@ -129,13 +129,21 @@ export const web_socket = (() => {
         }
 
         handlePlayerDisconnect(playerId, playerCount) {
-            this.deleteRemotePlayer(playerId);
+            
+            console.log(this.scene)
+            console.log(this.players[playerId].entity)
+            console.log(this.Manager.entities_.indexOf(this.players[playerId].entity))
+            // this.Manager.Remove(this.players[playerId].entity);
+            
+            this.scene.remove(this.players[playerId].entity);      
+            delete this.players[playerId];            
+            
             this.addStatusMessage(playerId, 'leave');
         }
 
         async initRemotePlayer(playerID, skin) {
             const enemy = new entity.Entity();
-            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin))
+            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin, playerID))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
             this.Manager.Add(enemy, playerID);
         
@@ -168,14 +176,6 @@ export const web_socket = (() => {
                     this.player.deaths = remotePlayers[id].deaths;
                 }
             }
-        }
-
-        deleteRemotePlayer(playerID) {
-            // console.log("delete : ", playerID)
-            // console.log(this.scene)
-            // console.log(this.players[playerID].entity)
-            this.scene.remove(this.players[playerID].entity);            
-            delete this.players[playerID];
         }
 
         deathTrigger() {
