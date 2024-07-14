@@ -2,9 +2,12 @@ import * as THREE from 'three';
 import { entity } from './entity';
 import { finite_state_machine } from '../map/finite-state-machine.js';
 import { player_state } from '../map/player_control/player-state.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';    // Pour les animation
-import skins from '../../../../static/datas/targetItems.js';
 
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';    // Pour les animation
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+import skins from '../../../../static/datas/targetItems.js';
 
 export const entity_enemy = (() => {
 
@@ -61,7 +64,9 @@ export const entity_enemy = (() => {
                 group: this.group_,
             };
             this.Parent.Attributes.ENEMY_PLAYER = true;
+
             this.LoadModels_();
+            this.AddPseudo_();
         }
 
         InitComponent() {
@@ -90,7 +95,7 @@ export const entity_enemy = (() => {
             this.stateMachine_.SetState('recieveHit');
         }
 
-        async LoadModels_() {
+        LoadModels_() {
             const enemyGltf = skins[this.skin_];
             const gltfLoader = new GLTFLoader();
 
@@ -147,6 +152,35 @@ export const entity_enemy = (() => {
             })
         }
 
+        AddPseudo_() {
+            let fontUrl;
+            if(import.meta.env.DEV){
+                fontUrl = new URL('../../../../static/fonts/ESPACION_Regular.json', import.meta.url).href
+            } else {
+                fontUrl = './static/fonts/ESPACION_Regular.json'
+            }
+
+            const loader = new FontLoader();
+            loader.load(fontUrl, (font) => {
+                const geometry = new TextGeometry(this.playerId_, {
+                    font: font,
+                    size: 0.8,
+                    height: 0.1,
+                });
+
+                const textMesh = new THREE.Mesh(geometry, [
+                    new THREE.MeshPhongMaterial({ color: 0x000000 }), // front    
+                    new THREE.MeshPhongMaterial({ color: 0xFFFFFF }) // side    
+                ]);
+
+                this.group_.add(textMesh);
+                
+                textMesh.castShadow = true;
+                textMesh.position.set(2, 3.5, 0);
+                textMesh.rotateY(Math.PI);
+            });
+        }
+
         UpdateAnimations_() {
             this.positionHistory_.unshift({
                 x: Number(this.group_.position.x.toFixed(4)),
@@ -171,9 +205,9 @@ export const entity_enemy = (() => {
                 const deltaY = (currentPosition.y - this.positionHistory_[i].y).toFixed(4);
                 const deltaZ = Math.abs(currentPosition.z - this.positionHistory_[i].z).toFixed(4);
 
-                if(deltaY > 0.2){
+                if (deltaY > 0.1) {
                     return 'jump'; // Enemy jump animation
-                } 
+                }
 
                 if (deltaX > this.positionThreshold_ || deltaZ > this.positionThreshold_) {
                     return 'walk'; // Enemy walk animation
