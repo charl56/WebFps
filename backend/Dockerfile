@@ -16,6 +16,7 @@ RUN npm install
 # COPY config/ ./config
 COPY controllers/ ./controllers
 COPY models/ ./models
+COPY service/ ./service
 COPY utils/ ./utils
 COPY server.js ./
 

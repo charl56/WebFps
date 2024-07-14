@@ -9,6 +9,7 @@ const http = require('http').Server(app);
 
 app.use(cors());
 app.use(express.json()); // for parsing application/json
+
 app.use(mapsRouter); // Use maps routes
 app.use(usersRouter); // Use login routes
 

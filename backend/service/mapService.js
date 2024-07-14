@@ -5,7 +5,6 @@ const userService = require('../service/userService');
 exports.getAllMaps = () => mapList.map(map => ({ ...map }));
 
 exports.getMapByName = (mapName) => {
-    console.log("getname : ", mapList.find(map => map.name === mapName));
     return mapList.find(map => map.name === mapName);
 };
 
