@@ -328,6 +328,41 @@ export const player_state = (() => {
     }
   };
 
+  class JumpState extends State {
+    constructor(parent) {
+      super(parent);
+    }
+  
+    get Name() {
+      return 'jump';
+    }
+  
+    Enter(prevState) {
+      const jumpAction = this._parent._proxy.animations['jump'].action;
+      if (prevState) {
+        const prevAction = this._parent._proxy.animations[prevState.Name].action;
+        jumpAction.time = 0.0;
+        jumpAction.enabled = true;
+        jumpAction.setEffectiveTimeScale(1.0);
+        jumpAction.setEffectiveWeight(1.0);
+        jumpAction.crossFadeFrom(prevAction, 0.25, true);
+        jumpAction.play();
+      } else {
+        jumpAction.play();
+      }
+    }
+  
+    Exit() {
+    }
+  
+    Update(_, input) {
+      if (!input) {
+        return;
+      }
+
+    }
+  };
+
   class LoadingState extends State {
     constructor(parent) {
       super(parent);
@@ -401,6 +436,7 @@ export const player_state = (() => {
     AttackState_1: AttackState_1,
     AttackState_2: AttackState_2,
     IdleState: IdleState,
+    JumpState: JumpState,
     LoadingState: LoadingState,
     WalkState: WalkState,
     RunState: RunState,

@@ -24,6 +24,7 @@ export const entity_enemy = (() => {
             this._AddState('death', player_state.DeathState);
             this._AddState('attack_1', player_state.AttackState_1);
             this._AddState('recieveHit', player_state.HitState);
+            this._AddState('jump', player_state.JumpState);
         }
     };
 
@@ -123,7 +124,7 @@ export const entity_enemy = (() => {
                     return null;
                 };
                 // Set animations
-                this.animations_['loading'] = _FindAnim('Jump');
+                this.animations_['jump'] = _FindAnim('Jump');
                 this.animations_['idle'] = _FindAnim('Idle');
                 this.animations_['walk'] = _FindAnim('Walk');
                 this.animations_['death'] = _FindAnim('Death');
@@ -147,21 +148,41 @@ export const entity_enemy = (() => {
             })
         }
 
-        UpdateAnimations_(){
-            this.positionHistory_.unshift(Number(this.group_.position.x.toFixed(4)));
+        UpdateAnimations_() {
+            this.positionHistory_.unshift({
+                x: Number(this.group_.position.x.toFixed(4)),
+                y: Number(this.group_.position.y.toFixed(4)),
+                z: Number(this.group_.position.z.toFixed(4))
+            });
+
             if (this.positionHistory_.length > this.historyLength_) {
                 this.positionHistory_.pop();
             }
-            this.checkMovement_(this.group_.position.x) ? this.stateMachine_.SetState('walk') : this.stateMachine_.SetState('idle')
+            const state = this.checkMovement_(this.group_.position)
+            this.stateMachine_.SetState(state);
         }
 
-        checkMovement_(currentX) {
+        checkMovement_(currentPosition) {
+            if (this.positionHistory_.length < 2) {
+                return 'idle';
+            }
+
+      
+
             for (let i = 0; i < this.positionHistory_.length; i++) {
-                if (Math.abs(currentX - this.positionHistory_[i]) > this.positionThreshold_) {
-                    return true; // Il y a du mouvement
+                const deltaX = Math.abs(currentPosition.x - this.positionHistory_[i].x).toFixed(4);
+                const deltaY = (currentPosition.y - this.positionHistory_[i].y).toFixed(4);
+                const deltaZ = Math.abs(currentPosition.z - this.positionHistory_[i].z).toFixed(4);
+
+                if(deltaY > 0.2){
+                    return 'jump';
+                } 
+
+                if (deltaX > this.positionThreshold_ || deltaZ > this.positionThreshold_) {
+                    return 'walk'; // Il y a du mouvement
                 }
             }
-            return false; // Pas de mouvement
+            return 'idle'; // Pas de mouvement
         }
 
 
@@ -169,7 +190,7 @@ export const entity_enemy = (() => {
             if (!this.stateMachine_) {
                 return;
             }
-            
+
             this.UpdateAnimations_();
 
             if (this.mixer_) {
