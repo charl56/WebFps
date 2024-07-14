@@ -45,7 +45,7 @@ export const entity_enemy = (() => {
             this.skin_ = skin;
             this.mesh_ = null;
             this.positionHistory_ = [];
-            this.historyLength_ = 10; // Nombre de positions à conserver
+            this.historyLength_ = 5; // Nombre de positions à conserver
             this.positionThreshold_ = 0.001; // Seuil de différence pour considérer le mouvement
 
         }
@@ -167,22 +167,20 @@ export const entity_enemy = (() => {
                 return 'idle';
             }
 
-      
-
             for (let i = 0; i < this.positionHistory_.length; i++) {
                 const deltaX = Math.abs(currentPosition.x - this.positionHistory_[i].x).toFixed(4);
                 const deltaY = (currentPosition.y - this.positionHistory_[i].y).toFixed(4);
                 const deltaZ = Math.abs(currentPosition.z - this.positionHistory_[i].z).toFixed(4);
 
                 if(deltaY > 0.2){
-                    return 'jump';
+                    return 'jump'; // Enemy jump animation
                 } 
 
                 if (deltaX > this.positionThreshold_ || deltaZ > this.positionThreshold_) {
-                    return 'walk'; // Il y a du mouvement
+                    return 'walk'; // Enemy walk animation
                 }
             }
-            return 'idle'; // Pas de mouvement
+            return 'idle'; // Enemy idle animation
         }
 
 
