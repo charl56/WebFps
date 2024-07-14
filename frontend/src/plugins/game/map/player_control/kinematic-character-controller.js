@@ -64,7 +64,7 @@ export const kinematic_character_controller = (() => {
             const pos = this.Parent.Position;
             const quat = this.Parent.Quaternion;
 
-            this.body_ = this.FindEntity('physics').GetComponent('AmmoJSController').CreateKinematicCharacterController(
+            this.body_ = this.FindEntity('physics').GetComponent('AmmoJSController').CreateKinematicCharacterControllerEnemy(
                 pos, quat, { name: this.Parent.Name });
 
             this.Parent.Attributes.Physics = {
@@ -79,14 +79,12 @@ export const kinematic_character_controller = (() => {
         }
 
         OnPosition_(msg) {
-            // const pos = this.Parent.Position;
-            console.log("msg kinematic : ", msg.value.y)
             const pos = msg.value;
             const t = this.body_.transform_;
 
             this.body_.body_.getWorldTransform(t);
 
-            t.getOrigin().setValue(pos.x, pos.y, pos.z);
+            t.getOrigin().setValue(pos.x, pos.y + 1.9, pos.z);
             this.body_.body_.setWorldTransform(t);
         }
 

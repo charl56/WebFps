@@ -72,8 +72,7 @@ export const entity_enemy = (() => {
         }
 
         OnUpdatePosition_(msg) {
-            console.log("msg entity : ", msg.value.y)
-            // msg.value.y -= 2.8;
+            msg.value.y -= 2.6;
             this.group_.position.copy(msg.value);
         }
 
@@ -153,7 +152,6 @@ export const entity_enemy = (() => {
             if (this.positionHistory_.length > this.historyLength_) {
                 this.positionHistory_.pop();
             }
-            console.log(this.group_.position)
             this.checkMovement_(this.group_.position.x) ? this.stateMachine_.SetState('walk') : this.stateMachine_.SetState('idle')
         }
 

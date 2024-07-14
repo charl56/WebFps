@@ -85,6 +85,68 @@ export const ammojs_component = (() => {
     }
   }
 
+
+  class AmmoJSKinematicCharacterControllerEnemy {
+    constructor() {
+    }
+
+    Destroy() {
+    }
+
+    Init(pos, quat, userData) {
+      const radius = 0.7;
+      const height = 1.5;
+
+      this.transform_ = new AmmoJs.btTransform();
+      this.transform_.setIdentity();
+      this.transform_.setOrigin(new AmmoJs.btVector3(pos.x, pos.y, pos.z));
+      this.transform_.setRotation(new AmmoJs.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+
+      this.shape_ = new AmmoJs.btCapsuleShape(radius, height);
+      this.shape_.setMargin(0.05);
+
+      this.body_ = new AmmoJs.btPairCachingGhostObject();
+      this.body_.setWorldTransform(this.transform_);
+      this.body_.setCollisionShape(this.shape_);
+      this.body_.setCollisionFlags(flags.CF_CHARACTER_OBJECT);
+      this.body_.activate(true);
+
+      this.controller_ = new AmmoJs.btKinematicCharacterController(this.body_, this.shape_, 0.35, 1);
+      this.controller_.setUseGhostSweepTest(true);
+      this.controller_.setUpInterpolate();
+      this.controller_.setGravity(GRAVITY);
+      this.controller_.setMaxSlope(Math.PI / 3);
+      this.controller_.canJump(true);
+      this.controller_.setJumpSpeed(GRAVITY/4);
+      this.controller_.setMaxJumpHeight(100);
+
+      this.userData_ = new AmmoJs.btVector3(0, 0, 0);
+      this.userData_.userData = userData;
+      this.body_.setUserPointer(this.userData_);
+
+      this.tmpVec3_ = new AmmoJs.btVector3(0, 0, 0);
+    }
+
+    setJumpMultiplier(multiplier) {
+      this.controller_.setJumpSpeed(multiplier * GRAVITY / 3);
+    }
+
+    setWalkDirection(walk) {
+      this.tmpVec3_.setValue(walk.x, walk.y, walk.z);
+      this.controller_.setWalkDirection(this.tmpVec3_);
+    }
+
+    onGround() {
+      return this.controller_.onGround();
+    }
+
+    jump() {
+      if (this.controller_.onGround()) {
+        this.controller_.jump();
+      }
+    }
+  }
+
   class AmmoJSRigidBody {
     constructor() {
     }
@@ -272,6 +334,20 @@ export const ammojs_component = (() => {
 
     CreateKinematicCharacterController(pos, quat, userData) {
       const controller = new AmmoJSKinematicCharacterController();
+      controller.Init(pos, quat, userData);
+
+      this.physicsWorld_.addCollisionObject(controller.body_);
+      this.physicsWorld_.addAction(controller.controller_);
+
+      const broadphase = this.physicsWorld_.getBroadphase();
+      const paircache = broadphase.getOverlappingPairCache()
+      paircache.setInternalGhostPairCallback(new AmmoJs.btGhostPairCallback());
+
+      return controller;
+    }
+
+    CreateKinematicCharacterControllerEnemy(pos, quat, userData) {
+      const controller = new AmmoJSKinematicCharacterControllerEnemy();
       controller.Init(pos, quat, userData);
 
       this.physicsWorld_.addCollisionObject(controller.body_);

@@ -123,7 +123,6 @@ export const web_socket = (() => {
             if (this.player.id === undefined) return;    // Because this function can be call before player init
 
             if (data.playerId !== this.player.id) {
-                console.log("handle : ", data)
                 this.initRemotePlayer(data.playerId, data.skin);
             }
             this.addStatusMessage(data.playerId, 'join');
@@ -158,7 +157,6 @@ export const web_socket = (() => {
                     positionSync.fromArray(remotePlayers[id].position);
                     lookDirection.fromArray(remotePlayers[id].direction);
 
-                    console.log("positionSync.y : ", positionSync.y)
                     this.players[id].entity.SetPosition(positionSync);
                     this.players[id].entity.SetQuaternion(lookDirection);
                     this.players[id].kills = remotePlayers[id].kills;
