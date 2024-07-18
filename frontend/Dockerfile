@@ -8,10 +8,9 @@ WORKDIR /app
 
 # Copy project files and restore as distinct layers
 COPY package.json ./
-COPY package-lock.json ./
 
 # install project dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy everything else for build
 COPY src/ ./src
