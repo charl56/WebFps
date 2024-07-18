@@ -18,14 +18,14 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Sync files with rsync
+    - name: Copy modified files via rsync
       run: |
-        rsync -avz --delete -e "ssh -p ${{ secrets.SSH_PORT }}" ./ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
+        rsync -avz --exclude='.git*' -e "ssh -p ${{ secrets.SSH_PORT }}" --delete ${{ github.workspace }}/ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
 
     - name: Deploy
       run: |
         ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
         cd /srv/WebFps
-        docker-compose down
-        docker-compose up -d --build
+        docker compose down
+        docker compose up -d --build
         EOF
