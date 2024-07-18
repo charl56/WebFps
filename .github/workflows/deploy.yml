@@ -24,7 +24,7 @@ jobs:
 
     - name: Copy files via SCP
       run: |
-        scp -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
+        scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
 
     - name: Deploy
       run: |
