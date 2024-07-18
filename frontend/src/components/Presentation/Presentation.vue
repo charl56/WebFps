@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex flex-column align-center presentation-div">
         <CustomeParticles />
-        <p class="presentation-title">SIUUU V2</p>
+        <p class="presentation-title">SIUUU</p>
         <form @submit.prevent="login" v-if="!errorServer"
             class="d-flex flex-column justify-space-around py-10 h-screen w-25">
             <div>
