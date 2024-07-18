@@ -28,7 +28,8 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
         cd /srv/WebFps
         docker compose down
         docker compose up -d --build
+        EOF
