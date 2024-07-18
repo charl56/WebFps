@@ -20,16 +20,16 @@ jobs:
 
     - name: Remove existing /srv/WebFps directory
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 'rm -rf /srv/WebFps'
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 'rm -rf /srv/WebFps'
 
     - name: Copy files via SCP
       run: |
-        scp -r -o StrictHostKeyChecking=no ./* ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
+        scp -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
 
     - name: Deploy
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-        cd /srv
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        cd /srv/WebFps
         docker-compose down
         docker-compose up -d --build
         EOF

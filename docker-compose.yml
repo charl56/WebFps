@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  fps-front:
+    container_name: fps-front
+    build:
+      context: ./frontend      # Lieu du dossier 'frontend' dans le projet
+      dockerfile: ./Dockerfile  # Lieu du dockerfile, par rapport au context
+      args:       # Permet au front d'avoir les adresses ip du front et du back
+        VITE_FRONT_URI: webfps
+        VITE_BACK_URL: https://charles.studi0426.com/webfps-back/
+        VITE_BACK_WS: wss://charles.studi0426.com/webfps-socket/
+    image: charles/webfps:frontend
+    restart: always
+    ports:
+      - "127.0.0.1:8085:80"
+    networks:
+      - webfps-network
+  fps-back:
+    container_name: fps-back
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: charles/webfps:backend
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - webfps-network
+
+networks:
+  webfps-network:
+    driver: bridge
+    ipam:
+      driver: default
