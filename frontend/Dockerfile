@@ -3,6 +3,9 @@
 #####
 FROM node:lts-alpine as build-stage
 
+# Install git for git dependancies in package.json
+RUN apk add --no-cache git
+
 # make the 'app' folder the current working directory
 WORKDIR /app
 

@@ -18,10 +18,12 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Remove existing /srv/WebFps directory
+    - name: Stop docker and remove existing /srv/WebFps directory
       run: |
-        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 'find /srv/WebFps -mindepth 1 -delete'
-
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 
+        cd /srv/WebFps
+        docker-compose down
+        find /srv/WebFps -mindepth 1 -delete
 
     - name: Copy files via SCP
       run: |
@@ -29,8 +31,7 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 
         cd /srv/WebFps
         docker-compose down
         docker-compose up -d --build
-        EOF
