@@ -18,7 +18,7 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Stop docker and remove existing /srv/WebFps directory
+    - name: Remove existing /srv/WebFps directory
       run: |
         ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 'find /srv/WebFps -mindepth 1 -delete'
 
