@@ -20,7 +20,7 @@ jobs:
 
     - name: Copy modified files via rsync
       run: |
-        rsync -avz --exclude='.git*' -e "ssh -p ${{ secrets.SSH_PORT }}" --delete ${{ github.workspace }}/ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
+        rsync -avz --exclude='.git*' -e "ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}" --delete ${{ github.workspace }}/ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
 
     - name: Deploy
       run: |
