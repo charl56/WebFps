@@ -18,18 +18,14 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Remove existing /srv/WebFps directory
+    - name: Sync files with rsync
       run: |
-        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} 'find /srv/WebFps -mindepth 1 -delete'
-
-    - name: Copy files via SCP
-      run: |
-        scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
+        rsync -avz --delete -e "ssh -p ${{ secrets.SSH_PORT }}" ./ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:/srv/WebFps
 
     - name: Deploy
       run: |
         ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.SERVER_IP }} << 'EOF'
         cd /srv/WebFps
-        docker compose down
-        docker compose up -d --build
+        docker-compose down
+        docker-compose up -d --build
         EOF
