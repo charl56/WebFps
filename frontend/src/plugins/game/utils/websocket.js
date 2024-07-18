@@ -26,6 +26,7 @@ export const web_socket = (() => {
             this.players = {};
             this.chatMessages = new Array();
 
+            this.elapsedTime = 0; 
 
             this.ui = {
                 body: document.querySelector('body'),
@@ -261,7 +262,7 @@ export const web_socket = (() => {
             this.ui.chatSection.classList.remove('hidden');
 
             const chatMessage = {
-                endTime: this.elaspedTime + 10,
+                endTime: this.elapsedTime + 7, // Message should disappear after 7 seconds
                 ui: content,
             };
 
@@ -278,7 +279,8 @@ export const web_socket = (() => {
             for (let i = chatMessages.length - 1; i >= 0; i--) {
                 const message = chatMessages[i];
 
-                if (this.elaspedTime >= message.endTime) {
+                console.log(this.elapsedTime, message.endTime)
+                if (this.elapsedTime >= message.endTime) {
                     chatMessages.splice(i, 1);
 
                     const chatList = this.ui.chatList;
@@ -361,6 +363,8 @@ export const web_socket = (() => {
         }
 
         Update(timeElapsedS) {
+            this.elapsedTime += timeElapsedS;
+            console.log(this.elapsedTime)
             this.updateChatList();
             this.updateUi();
         }

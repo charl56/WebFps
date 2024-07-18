@@ -156,10 +156,17 @@ export default {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    padding: 5px 10px;
     font-size: 18px;
     background-color: #59595954;
     border-top-right-radius: 10px;
+}
+#inputText{
+    padding: 5px 10px;
+}
+#chatSection{
+    .div-chatList{
+        padding: 5px 10px;
+    }
 }
 
 .div-chatList {
