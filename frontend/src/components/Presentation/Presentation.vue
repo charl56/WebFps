@@ -6,7 +6,7 @@
             class="d-flex flex-column justify-space-around py-10 h-screen w-25">
             <div>
                 <label for="username">Pseudo :</label>
-                <input type="text" id="username" v-model="username" class="form-control" required />
+                <input type="text" id="username" v-model="username" class="form-control" maxlength="20" required />
                 <p class="mt-5 text-h6">Choix de la map</p>
                 <div class="btn-map w-100">
                     <div v-for="(map, index) in maps" :key="index" class="btn-map-input"

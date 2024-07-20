@@ -93,7 +93,7 @@ export default {
 
 /* Score table */
 #score-table {
-    width: 300px;
+    width: 400px;
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
     top: 0;
@@ -109,12 +109,14 @@ export default {
 }
 
 .player-id {
-    flex: 1;
+    /* flex: 1; */
+    width: 200px;
 }
 
 .player-kills,
 .player-deaths {
-    flex: 1;
+    width: 100px;
+    /* flex: 1; */
     text-align: right;
 }
 
