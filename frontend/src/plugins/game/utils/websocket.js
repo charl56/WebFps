@@ -26,7 +26,7 @@ export const web_socket = (() => {
             this.players = {};
             this.chatMessages = new Array();
 
-            this.elapsedTime = 0; 
+            this.elapsedTime = 0;
 
             this.ui = {
                 body: document.querySelector('body'),
@@ -64,7 +64,7 @@ export const web_socket = (() => {
                         break;
                     case 'kill message':
                         if (data.shooter) {
-                            if(this.player.id != data.victim){
+                            if (this.player.id != data.victim) {
                                 this.players[data.victim].entity.Broadcast({ topic: 'health.death' });
                             }
                             this.addKillMessage(data.shooter, data.victim);
@@ -130,15 +130,15 @@ export const web_socket = (() => {
         }
 
         handlePlayerDisconnect(playerId, playerCount) {
-            
+
             console.log(this.scene)
             console.log(this.players[playerId].entity)
             console.log(this.Manager.entities_.indexOf(this.players[playerId].entity))
             // this.Manager.Remove(this.players[playerId].entity);
-            
-            this.scene.remove(this.players[playerId].entity);      
-            delete this.players[playerId];            
-            
+
+            this.scene.remove(this.players[playerId].entity);
+            delete this.players[playerId];
+
             this.addStatusMessage(playerId, 'leave');
         }
 
@@ -147,7 +147,7 @@ export const web_socket = (() => {
             enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin, playerID))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
             this.Manager.Add(enemy, playerID);
-        
+
             this.players[playerID] = {};
             this.players[playerID].entity = enemy;
             this.players[playerID].positionSync = new THREE.Vector3();
@@ -161,13 +161,38 @@ export const web_socket = (() => {
         updateRemotePlayers(remotePlayers) {
             const positionSync = new THREE.Vector3();
             const lookDirection = new THREE.Vector4();
+            const yRotationVector4 = new THREE.Vector4();
+
             for (let id in remotePlayers) {
                 if (id !== this.player.id && this.players[id].isReady) {
                     positionSync.fromArray(remotePlayers[id].position);
                     lookDirection.fromArray(remotePlayers[id].direction);
 
+                    // Convertir Vector4 en Euler
+                    const quaternion = new THREE.Quaternion(lookDirection.x, lookDirection.y, lookDirection.z, lookDirection.w);
+                    console.log("quaternion ", quaternion)
+                    
+                    const euler = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
+                    console.log("euler ", euler)
+                    
+                    // Extraire l'angle de rotation autour de l'axe Y
+                    const yRotation = euler.y;
+
+                    // Créer un nouveau quaternion pour la rotation autour de l'axe Y uniquement
+                    const yRotationQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yRotation);
+                    console.log("yRotationQuaternion ", yRotationQuaternion)
+
+                    // Convertir le quaternion en Vector4
+                    yRotationVector4.set(
+                        yRotationQuaternion.x,
+                        yRotationQuaternion.y,
+                        yRotationQuaternion.z,
+                        yRotationQuaternion.w
+                    );
+                    console.log("yRotationVector4 ", yRotationVector4, " vs lookDirection ", lookDirection)
+
                     this.players[id].entity.SetPosition(positionSync);
-                    this.players[id].entity.SetQuaternion(lookDirection);
+                    this.players[id].entity.SetQuaternion(yRotationVector4);
                     this.players[id].kills = remotePlayers[id].kills;
                     this.players[id].deaths = remotePlayers[id].deaths;
                 } else {
@@ -279,7 +304,6 @@ export const web_socket = (() => {
             for (let i = chatMessages.length - 1; i >= 0; i--) {
                 const message = chatMessages[i];
 
-                console.log(this.elapsedTime, message.endTime)
                 if (this.elapsedTime >= message.endTime) {
                     chatMessages.splice(i, 1);
 
@@ -364,7 +388,6 @@ export const web_socket = (() => {
 
         Update(timeElapsedS) {
             this.elapsedTime += timeElapsedS;
-            console.log(this.elapsedTime)
             this.updateChatList();
             this.updateUi();
         }

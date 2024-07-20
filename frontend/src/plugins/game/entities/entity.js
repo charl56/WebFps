@@ -11,7 +11,8 @@ export const entity = (() => {
             this.attributes_ = {};
 
             this._position = new THREE.Vector3();
-            this._rotation = new THREE.Quaternion();
+            this._rotation = new THREE.Euler();
+            this._quaternion = new THREE.Quaternion();
             this.handlers_ = {};
             this.parent_ = null;
             this.dead_ = false;
@@ -117,6 +118,15 @@ export const entity = (() => {
         }
 
         SetQuaternion(r) {
+            this._quaternion.copy(r);
+            this.Broadcast({
+                topic: 'update.rotation',
+                value: this._quaternion,
+            });
+        }
+
+        // Gérer la rotation pour ne pas se pencher en avant et en arrire, garder le perso droit
+        SetRotation(r){
             this._rotation.copy(r);
             this.Broadcast({
                 topic: 'update.rotation',
@@ -129,24 +139,24 @@ export const entity = (() => {
         }
 
         get Quaternion() {
-            return this._rotation;
+            return this._quaternion;
         }
 
         get Forward() {
             const forward = new THREE.Vector3(0, 0, -1);
-            forward.applyQuaternion(this._rotation);
+            forward.applyQuaternion(this._quaternion);
             return forward;
         }
 
         get Left() {
             const forward = new THREE.Vector3(-1, 0, 0);
-            forward.applyQuaternion(this._rotation);
+            forward.applyQuaternion(this._quaternion);
             return forward;
         }
 
         get Up() {
             const forward = new THREE.Vector3(0, 1, 0);
-            forward.applyQuaternion(this._rotation);
+            forward.applyQuaternion(this._quaternion);
             return forward;
         }
 
