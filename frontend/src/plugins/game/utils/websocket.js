@@ -35,9 +35,6 @@ export const web_socket = (() => {
                 crosshair: null,
             };
         }
-        InitEntity() {
-            setInterval(() => this.updateScoreTable(), 1000);
-        }
 
         InitComponent() {
             const backendAddress = import.meta.env.VITE_BACK_WS || "ws://127.0.0.1:3000/" // WebSocket address
@@ -57,7 +54,7 @@ export const web_socket = (() => {
                         this.handlePlayerConnect(data);
                         break;
                     case 'player disconnect':
-                        this.handlePlayerDisconnect(data.playerId, data.playerCount);
+                        this.handlePlayerDisconnect(data.playerId);
                         break;
                     case 'chat message':
                         this.addChatMessage(data.username, data.message);
@@ -129,16 +126,9 @@ export const web_socket = (() => {
             this.addStatusMessage(data.playerId, 'join');
         }
 
-        handlePlayerDisconnect(playerId, playerCount) {
-
-            console.log(this.scene)
-            console.log(this.players[playerId].entity)
-            console.log(this.Manager.entities_.indexOf(this.players[playerId].entity))
-            // this.Manager.Remove(this.players[playerId].entity);
-
-            this.scene.remove(this.players[playerId].entity);
+        handlePlayerDisconnect(playerId) {
+            this.players[playerId].entity.Destroy();
             delete this.players[playerId];
-
             this.addStatusMessage(playerId, 'leave');
         }
 
@@ -164,45 +154,53 @@ export const web_socket = (() => {
             const yRotationVector4 = new THREE.Vector4();
 
             for (let id in remotePlayers) {
-                if (id !== this.player.id && this.players[id].isReady) {
-                    positionSync.fromArray(remotePlayers[id].position);
-                    lookDirection.fromArray(remotePlayers[id].direction);
+                if (id !== this.player.id) {
+                    if (this.players[id] && this.players[id].isReady) {
+                        const remotePlayer = remotePlayers[id];
+                        const localPlayer = this.players[id];
 
-                    // Convertir Vector4 en Euler
-                    const quaternion = new THREE.Quaternion(lookDirection.x, lookDirection.y, lookDirection.z, lookDirection.w);
-                    console.log("quaternion ", quaternion)
-                    
-                    const euler = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
-                    console.log("euler ", euler)
-                    
-                    // Extraire l'angle de rotation autour de l'axe Y
-                    const yRotation = euler.y;
+                        // Update position
+                        if (!localPlayer.positionSync.equals(remotePlayer.position)) {
+                            positionSync.fromArray(remotePlayer.position);
+                            localPlayer.positionSync.copy(positionSync);
+                            localPlayer.entity.SetPosition(positionSync);
+                        }
 
-                    // Créer un nouveau quaternion pour la rotation autour de l'axe Y uniquement
-                    const yRotationQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yRotation);
-                    console.log("yRotationQuaternion ", yRotationQuaternion)
+                        // Update look direction
+                        if (!localPlayer.lookDirection.equals(remotePlayer.direction)) {
+                            lookDirection.fromArray(remotePlayer.direction);
+                            localPlayer.lookDirection.copy(lookDirection);
 
-                    // Convertir le quaternion en Vector4
-                    yRotationVector4.set(
-                        yRotationQuaternion.x,
-                        yRotationQuaternion.y,
-                        yRotationQuaternion.z,
-                        yRotationQuaternion.w
-                    );
-                    console.log("yRotationVector4 ", yRotationVector4, " vs lookDirection ", lookDirection)
+                            const quaternion = new THREE.Quaternion(lookDirection.x, lookDirection.y, lookDirection.z, lookDirection.w);
+                            const euler = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
+                            const yRotationQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), euler.y);
 
-                    this.players[id].entity.SetPosition(positionSync);
-                    this.players[id].entity.SetQuaternion(yRotationVector4);
-                    this.players[id].kills = remotePlayers[id].kills;
-                    this.players[id].deaths = remotePlayers[id].deaths;
+                            yRotationVector4.set(
+                                yRotationQuaternion.x,
+                                yRotationQuaternion.y,
+                                yRotationQuaternion.z,
+                                yRotationQuaternion.w
+                            );
+                            localPlayer.entity.SetQuaternion(yRotationVector4);
+                        }
+
+                        // Update kills and deaths
+                        if (localPlayer.kills !== remotePlayer.kills) {
+                            localPlayer.kills = remotePlayer.kills;
+                        }
+                        if (localPlayer.deaths !== remotePlayer.deaths) {
+                            localPlayer.deaths = remotePlayer.deaths;
+                        }
+                    }
                 } else {
-                    this.player.health = remotePlayers[id].health;
-                    this.player.health <= 0 ? this.player.health = 100 : null
-                    this.player.kills = remotePlayers[id].kills;
-                    this.player.deaths = remotePlayers[id].deaths;
+                    const localPlayer = remotePlayers[id];
+                    this.player.health = localPlayer.health > 0 ? localPlayer.health : 100;
+                    this.player.kills = localPlayer.kills;
+                    this.player.deaths = localPlayer.deaths;
                 }
             }
         }
+
 
         deathTrigger() {
             this.Broadcast({ topic: 'health.death', });
@@ -390,6 +388,10 @@ export const web_socket = (() => {
             this.elapsedTime += timeElapsedS;
             this.updateChatList();
             this.updateUi();
+            this.updateScoreTable();
+            
+            // console.log(Object.keys(this.Parent.parent_.entities_))
+            // console.log(this.Parent.parent_.entities_)
         }
 
     }

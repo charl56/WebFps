@@ -129,7 +129,6 @@ export class QuickFPS1 {
         const timeElapsedS = Math.min(1.0 / 30.0, timeElapsed * 0.001);
         // Update entities, AmmoJs part & ThreeJs part
         this.entityManager_.Update(timeElapsedS);
-        // console.log(this.entityManager_)
         this.ammojs_.StepSimulation(timeElapsedS);
         this.threejs_.Render(timeElapsedS);
     }

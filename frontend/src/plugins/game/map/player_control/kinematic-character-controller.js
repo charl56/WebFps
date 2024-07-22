@@ -53,10 +53,12 @@ export const kinematic_character_controller = (() => {
         constructor(params) {
             super();
             this.params_ = params;
+            this.body_ = null;
         }
 
         Destroy() {
-            this.FindEntity('physics').GetComponent('AmmoJSController').RemoveRigidBody(this.body_);
+            this.FindEntity('physics').GetComponent('AmmoJSController').RemoveKinematicCharacterControllerEnemy(this.body_);
+            this.body_ = null;
         }
 
         InitEntity() {

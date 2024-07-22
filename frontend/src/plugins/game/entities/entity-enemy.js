@@ -56,7 +56,7 @@ export const entity_enemy = (() => {
 
         InitEntity() {
             this.group_ = new THREE.Group();
-
+            this.group_.name = this.playerId_;
             this.params_.scene.add(this.group_);
             this.animations_ = {};
 
@@ -154,7 +154,7 @@ export const entity_enemy = (() => {
 
         AddPseudo_() {
             let fontUrl;
-            if(import.meta.env.DEV){
+            if (import.meta.env.DEV) {
                 fontUrl = new URL('../../../../static/fonts/ESPACION_Regular.json', import.meta.url).href
             } else {
                 fontUrl = './static/fonts/ESPACION_Regular.json'
@@ -174,7 +174,7 @@ export const entity_enemy = (() => {
                 ]);
 
                 this.group_.add(textMesh);
-                
+
                 textMesh.castShadow = true;
                 textMesh.position.set(2, 3.5, 0);
                 textMesh.rotateY(Math.PI);
@@ -214,6 +214,10 @@ export const entity_enemy = (() => {
                 }
             }
             return 'idle'; // Enemy idle animation
+        }
+
+        Destroy() {
+            this.params_.scene.remove(this.group_);
         }
 
 

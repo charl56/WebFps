@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {entity} from '../entities/entity.js';
+import { entity } from '../entities/entity.js';
 import Ammo from 'ammo.js';
 
 
@@ -55,7 +55,7 @@ export const ammojs_component = (() => {
       this.controller_.setGravity(GRAVITY);
       this.controller_.setMaxSlope(Math.PI / 3);
       this.controller_.canJump(true);
-      this.controller_.setJumpSpeed(GRAVITY/4);
+      this.controller_.setJumpSpeed(GRAVITY / 4);
       this.controller_.setMaxJumpHeight(100);
 
       this.userData_ = new AmmoJs.btVector3(0, 0, 0);
@@ -117,7 +117,7 @@ export const ammojs_component = (() => {
       this.controller_.setGravity(GRAVITY);
       this.controller_.setMaxSlope(Math.PI / 3);
       this.controller_.canJump(true);
-      this.controller_.setJumpSpeed(GRAVITY/4);
+      this.controller_.setJumpSpeed(GRAVITY / 4);
       this.controller_.setMaxJumpHeight(100);
 
       this.userData_ = new AmmoJs.btVector3(0, 0, 0);
@@ -204,10 +204,10 @@ export const ammojs_component = (() => {
         c.updateMatrixWorld(true);
         if (c.geometry) {
           const p = c.geometry.attributes.position.array;
-          for (let i = 0; i < c.geometry.index.count; i+=3) {
+          for (let i = 0; i < c.geometry.index.count; i += 3) {
             const i0 = c.geometry.index.array[i] * 3;
-            const i1 = c.geometry.index.array[i+1] * 3;
-            const i2 = c.geometry.index.array[i+2] * 3;
+            const i1 = c.geometry.index.array[i + 1] * 3;
+            const i2 = c.geometry.index.array[i + 2] * 3;
 
             V0.fromArray(p, i0).applyMatrix4(c.matrixWorld);
             V1.fromArray(p, i1).applyMatrix4(c.matrixWorld);
@@ -254,7 +254,7 @@ export const ammojs_component = (() => {
   class AmmoJSController extends entity.Component {
     constructor() {
       super();
-      
+
     }
 
     Destroy() {
@@ -271,7 +271,7 @@ export const ammojs_component = (() => {
       this.broadphase_ = new AmmoJs.btDbvtBroadphase();
       this.solver_ = new AmmoJs.btSequentialImpulseConstraintSolver();
       this.physicsWorld_ = new AmmoJs.btDiscreteDynamicsWorld(
-          this.dispatcher_, this.broadphase_, this.solver_, this.collisionConfiguration_);
+        this.dispatcher_, this.broadphase_, this.solver_, this.collisionConfiguration_);
       this.physicsWorld_.setGravity(new AmmoJs.btVector3(0, -100, 0));
 
       this.tmpRayOrigin_ = new AmmoJs.btVector3();
@@ -304,10 +304,10 @@ export const ammojs_component = (() => {
         for (let i = 0; i < hits; ++i) {
           const obj = collisionObjs.at(i);
           const ud0 = AmmoJs.castObject(obj.getUserPointer(), AmmoJs.btVector3).userData;
-  
+
           const point = points.at(i);
           const normal = normals.at(i);
-  
+
           const p = new THREE.Vector3(point.x(), point.y(), point.z());
           const n = new THREE.Vector3(normal.x(), normal.y(), normal.z());
 
@@ -320,7 +320,7 @@ export const ammojs_component = (() => {
         }
       }
 
-      hitData.sort((a, b) => { return a.distance - b.distance});
+      hitData.sort((a, b) => { return a.distance - b.distance });
 
       AmmoJs.destroy(rayCallback);
 
@@ -360,6 +360,19 @@ export const ammojs_component = (() => {
       return controller;
     }
 
+    RemoveKinematicCharacterControllerEnemy(controller) {
+      this.physicsWorld_.removeCollisionObject(controller.body_);
+      this.physicsWorld_.removeAction(controller.controller_);
+
+      AmmoJs.destroy(controller.body_);
+      AmmoJs.destroy(controller.controller_);
+      AmmoJs.destroy(controller.transform_);
+      AmmoJs.destroy(controller.shape_);
+      AmmoJs.destroy(controller.tmpVec3_);
+      AmmoJs.destroy(controller.userData_);
+    }
+
+
     CreateBox(pos, quat, size, userData) {
       const box = new AmmoJSRigidBody();
 
@@ -388,12 +401,12 @@ export const ammojs_component = (() => {
 
     StepSimulation(timeElapsedS) {
       this.physicsWorld_.stepSimulation(timeElapsedS, 10);
-      
+
       const dispatcher = this.physicsWorld_.getDispatcher();
       const numManifolds = this.dispatcher_.getNumManifolds();
-    
+
       const collisions = {};
-      for (let i=0; i < numManifolds; i++) {
+      for (let i = 0; i < numManifolds; i++) {
         const contactManifold = dispatcher.getManifoldByIndexInternal(i);
         const numContacts = contactManifold.getNumContacts();
 
@@ -418,7 +431,7 @@ export const ammojs_component = (() => {
 
       for (let k in collisions) {
         const e = this.FindEntity(k);
-        e.Broadcast({topic: 'physics.collision', value: collisions[k]});
+        e.Broadcast({ topic: 'physics.collision', value: collisions[k] });
       }
     }
 
@@ -427,6 +440,6 @@ export const ammojs_component = (() => {
   }
 
   return {
-      AmmoJSController: AmmoJSController,
+    AmmoJSController: AmmoJSController,
   };
 })();
