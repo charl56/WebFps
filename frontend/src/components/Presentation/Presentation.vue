@@ -61,17 +61,19 @@ export default {
     },
     mounted() {
         this.fetchMaps();
+        this.username = localStorage.getItem('username') || '';
+        this.selectedSkin = localStorage.getItem('userSkin') || '';
     },
     methods: {
         async login() {
             this.clearErrors();
 
             if (!this.mapChoosen) {
-                this.setError('Please select a map.');
+                this.setError('Il faut choisir une map');
                 return;
             }
             if (this.selectedSkin == '') {
-                this.setError('Please select a skin.');
+                this.setError('Il faut choisir un skin');
                 return;
             }
 
@@ -84,6 +86,9 @@ export default {
             if (response.status === "success") {
                 this.storeUserData();
                 eventBus.emit("startGame");
+                localStorage.setItem('username', this.username);
+                localStorage.setItem('mapChoosen', this.mapChoosen.name);
+                localStorage.setItem('userSkin', this.selectedSkin);
             } else {
                 this.setError(response.data.data.message);
             }
@@ -250,7 +255,7 @@ export default {
 
 .error-message {
     color: #f44336;
-    font-size: 14px;
+    font-size: 15px;
     margin-top: 10px;
 }
 </style>

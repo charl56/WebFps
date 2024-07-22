@@ -39,7 +39,7 @@ export const web_socket = (() => {
         InitComponent() {
             const backendAddress = import.meta.env.VITE_BACK_WS || "ws://127.0.0.1:3000/" // WebSocket address
             this.socket = new WebSocket(backendAddress);
-
+            
             this.socket.onopen = () => {
                 this.handleConnect();
             };
@@ -113,7 +113,16 @@ export const web_socket = (() => {
         }
 
         handleConnect() {
-            // console.log('WebSocket connected');
+            const username = localStorage.getItem('username');
+            const mapChoosen = localStorage.getItem('mapChoosen');
+            const userSkin = localStorage.getItem('userSkin');
+
+            this.socket.send(JSON.stringify({
+                type: 'initUser',
+                username: username,
+                map: mapChoosen,
+                skin: userSkin
+            }));
         }
 
         handlePlayerConnect(data) {

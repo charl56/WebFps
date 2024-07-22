@@ -12,3 +12,11 @@ exports.createUser = (username, mapName, skin) => {
     userList.push(newUser);
     return newUser;
 };
+
+exports.deleteUser = (username) => {
+    const userIndex = userList.findIndex(user => user.username === username);
+    if (userIndex < 0) return false;
+    userList.splice(userIndex, 1);
+    return true;
+};
+

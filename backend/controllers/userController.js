@@ -11,7 +11,7 @@ router.post('/login', async (req, res) => {
         }
         const existingUser = await userService.findUserByName(username);
         if (existingUser) {
-            return res.status(400).json({ message: 'Username already exists. Please choose another username.' });
+            return res.status(400).json({ message: 'Pseudo déjà utiliser, il faut en choisir un autre' });
         }
         const newUser = await userService.createUser(username, map, skin);
         mapService.incrementPlayerCount(map, username, skin);

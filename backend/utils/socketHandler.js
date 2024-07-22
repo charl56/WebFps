@@ -21,32 +21,14 @@ const initWebSocket = (http) => {
 
     wss.on('connection', (ws) => {
         // const id = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
-        const lastUser = userService.getLastUser();
-        if(lastUser === undefined || lastUser.username === undefined) return
-
-        const id = lastUser.username 
-
-        console.log(`${id} is connected`);
-
-        players[id] = {
-            position: [0, 0, 0],
-            direction: [0, 0, 0],
-            health: 100,
-            kills: 0,
-            deaths: 0,
-            skin: lastUser.skin
-        };
-
-        broadcast({ type: 'player connect', playerId: id, playerCount: wss.clients.size, skin: players[id].skin });
-
-        ws.send(JSON.stringify({ type: 'initPlayer', playerId:id, playerCount: wss.clients.size, players: players }));
+        let id = '';
 
         ws.on('close', () => {
             console.log(`${id} is disconnected`);
-            mapService.decrementPlayerCount(id); 
-            broadcast({ type: 'player disconnect', playerId:id, playerCount: wss.clients.size });
+            userService.deleteUser(id);
+            mapService.decrementPlayerCount(id);
+            broadcast({ type: 'player disconnect', playerId: id, playerCount: wss.clients.size });
             delete players[id];
-
         });
 
         ws.on('message', (message) => {
@@ -59,6 +41,28 @@ const initWebSocket = (http) => {
             }
 
             switch (data.type) {
+                case 'initUser':
+                    const { username, map, skin } = data;
+                    if (username === null || username === '') return
+
+                    userService.createUser(username, map, skin);
+                    id = username;
+                    
+                    players[username] = {
+                        position: [0, 0, 0],
+                        direction: [0, 0, 0],
+                        health: 100,
+                        kills: 0,
+                        deaths: 0,
+                        skin: skin
+                    };
+
+                    console.log(`${username} connected with map ${map} and skin ${skin}`);
+
+                    broadcast({ type: 'player connect', playerId: username, playerCount: wss.clients.size, skin: players[username].skin });
+                    ws.send(JSON.stringify({ type: 'initPlayer', playerId: username, playerCount: wss.clients.size, players: players }));
+
+                    break;
                 case 'chat message':
                     broadcast({ type: 'chat message', username: data.username, message: data.message });
                     break;
