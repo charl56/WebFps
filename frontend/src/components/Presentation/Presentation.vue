@@ -1,39 +1,52 @@
 <template>
     <div class="d-flex flex-column align-center presentation-div">
-        <CustomeParticles />
-        <p class="presentation-title">SIUUU</p>
-        <form @submit.prevent="login" v-if="!errorServer"
-            class="d-flex flex-column justify-space-around py-10 h-screen w-25">
-            <div>
-                <label for="username">Pseudo :</label>
-                <input type="text" id="username" v-model="username" class="form-control" maxlength="20" required />
-                <p class="mt-5 text-h6">Choix de la map</p>
-                <div class="btn-map w-100">
-                    <div v-for="(map, index) in maps" :key="index" class="btn-map-input"
-                        :class="{ 'map-available': map.availability, 'map-not-available': !map.availability || map.nbplayer == map.quantity, 'selected': mapChoosen && mapChoosen.name === map.name }">
-                        <button type="button" :disabled="!map.availability || map.nbplayer == map.quantity"
-                            @click="selectMap(map)">
-                            {{ map.name }}
-                        </button>
-                        <p>{{ map.nbplayer }} / {{ map.quantity }}</p>
-                    </div>
-                </div>
-                <p v-if="mapChoosen != null" class="mt-5 text-h6">Choix du skin</p>
-                <div v-if="mapChoosen != null" class="btn-map w-100">
-                    <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
-                        <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
-                            class="form-check-input" :disabled="!skin.available" />
-                        <label :for="'skin' + index" class="form-check-label">{{ skin.name }}</label>
-                    </div>
-                </div>
-                <div v-if="errorMessage">
-                    <p class="error-message">{{ errorMessage }}</p>
-                </div>
+        <!-- <CustomeParticles /> -->
+        <div class="screen-small mt-10">
+            <p>Le jeu est disponible sur PC</p>
+        </div>
+        <div class="screen-large">
+            <div class="presentation-title d-flex flex-column align-center">
+                <p class="presentation-title__p">SIUUU</p>
             </div>
-            <button type="submit" class="btn btn-primary my-5">Jouer</button>
-        </form>
-        <div v-if="errorServer">
-            <p class="error-message">{{ errorMessage }}</p>
+            <div class="presentation-form">
+
+                <form @submit.prevent="login" v-if="!errorServer"
+                    class="d-flex flex-column justify-space-between align-center h-100">
+                    <div class="presentation-form-maps d-flex justify-space-around w-100">
+                        <div v-for="(map, index) in maps" :key="index" class="d-flex align-center justify-center"
+                            :class="{ 'map-available': map.availability, 'map-not-available': !map.availability || map.nbplayer == map.quantity, 'map-selected': mapChoosen && mapChoosen.name === map.name }">
+                            <p @click="changeMap(map)">{{ map.name }}</p>
+                            <!-- <p>{{ map.nbplayer }} / {{ map.quantity }}</p> -->
+
+                        </div>
+                    </div>
+
+                    <div class="presentation-form-pseudo d-flex align-center justify-center">
+                        <input type="text" id="username" v-model="username" maxlength="20" required
+                            placeholder="Entrer un pseudo" />
+                    </div>
+
+                    <div class="presentation-form-skins d-flex">
+                        <div class="presentation-form-skins-title d-flex align-center justify-end">
+                            <p v-if="mapChoosen != null">Choix du skin</p>
+                        </div>
+                        <div v-if="mapChoosen != null"
+                            class="presentation-form-skins-btns d-flex align-center justify-center">
+                            <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
+                                <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
+                                    class="form-check-input" :disabled="!skin.available" />
+                                <label :for="'skin' + index" class="form-check-label">{{ setRealName(skin.name)
+                                    }}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="presentation-play">
+                        <p v-if="errorMessage || errorServer" class="error-message">{{ errorMessage }}</p>
+                        <button v-else type="submit" class="btn btn-primary my-5">Jouer</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </template>
@@ -101,7 +114,8 @@ export default {
                 this.setServerError('Multi not available.');
             }
         },
-        async selectMap(map) {
+        async changeMap(map) {
+            this.clearErrors();
             this.mapChoosen = map;
             const response = await sendRequest('GET', `maps/${map.name}`);
             if (response.status === "success") {
@@ -116,6 +130,9 @@ export default {
                 name: skin,
                 available: !usedSkins.has(skin)
             }));
+        },
+        setRealName(name) {
+            return name = name.split('_').join(' ');
         },
         storeUserData() {
             localStorage.setItem('mapChoosen', this.mapChoosen.name);
@@ -142,13 +159,158 @@ export default {
 <style scoped>
 .presentation-div {
     position: relative;
+    width: 100%;
+    height: 100%;
     z-index: 1;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
+    background-color: var(--background-color);
+    color: var(--text-color) !important;
+    font-family: JockeyOne-Regular;
 }
 
+
+
+.screen-large {
+    display: block;
+    width: 100%;
+    display: contents;
+}
+
+.screen-small {
+    display: none;
+
+    p {
+        font-size: 3vh;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .screen-large {
+        display: none;
+    }
+
+    .screen-small {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+}
+
+
+
+/* Titre */
 .presentation-title {
+    height: 125px;
+    font-size: 80px;
+
+    p:hover {
+        text-decoration: none;
+    }
+}
+
+/* Form */
+.presentation-form {
+    height: 100%;
+    width: 100%;
+}
+
+/* Maps choose */
+.presentation-form-maps {
+    height: 120px;
+
+    div:hover {
+        cursor: pointer;
+    }
+
+    p {
+        color: var(--text-color);
+        font-size: 50px;
+    }
+}
+
+.map-not-available {
+    p {
+        color: var(--text-color-danger);
+    }
+}
+
+.map-not-available:hover {
+    p {
+        scale: 1;
+        text-decoration: none;
+        cursor: not-allowed;
+    }
+}
+
+.map-selected {
+    p {
+        text-decoration: underline
+    }
+}
+
+/* Pseudo */
+.presentation-form-pseudo {
+    input {
+        width: 400px;
+        height: 55px;
+        background-color: #cccccc;
+        color: var(--text-color);
+        font-size: 25px;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    input:focus {
+        background-color: #D9D9D9;
+        outline: none;
+    }
+}
+
+/* Skin */
+.presentation-form-skins {
+    height: 120px;
+    width: 100%;
+}
+
+.presentation-form-skins-title {
+    width: 20%;
+    padding: 10px 30px;
+
+    p {
+        font-size: 25px;
+    }
+}
+
+.presentation-form-skins-btns {
+    width: 80%;
+
+    div {
+        width: 20%;
+        padding: 10px 30px;
+    }
+}
+
+/* Play btn */
+.presentation-play {
+    height: 120px;
+
+    button {
+        color: var(--text-color);
+        font-size: 50px;
+    }
+}
+
+
+
+
+/* CSS Components */
+p:hover,
+button:hover {
+    text-decoration: underline;
+    scale: 1.05;
+}
+
+
+/* .presentation-title {
     font-size: 50px;
     font-family: system-ui;
 }
@@ -257,5 +419,5 @@ export default {
     color: #f44336;
     font-size: 15px;
     margin-top: 10px;
-}
+} */
 </style>

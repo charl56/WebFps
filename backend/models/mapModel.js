@@ -11,7 +11,7 @@ class Map {
 
 const mapList = [
     new Map(1, 'Space', 5, 0, true),
-    new Map(2, 'Zombie', 6, 0, false),
+    new Map(2, 'Zombie', 6, 0, true),
 ];
 
 module.exports = {

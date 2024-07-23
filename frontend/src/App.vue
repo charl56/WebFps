@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app >
         <Presentation v-if="presentation" />
         <!-- Jeu -->
         <Game v-else />
@@ -38,12 +38,16 @@ export default {
 
 <style>
 :root {
-    --background-color: #ffffff;
+    --background-color: #AEC8CE;
     --text-selection: #7eb3e8;
-    --text-color: #6ab4ff;
+    --text-color: white;
+    --text-color-danger: #cd5858;
 }
 
-
+@font-face {
+    font-family: 'JockeyOne-Regular';
+    src: url('@/assets/fonts/JockeyOne-Regular.ttf') format('opentype');
+}
 /* Hide scrollbar for Chrome, Safari and Opera */
 html::-webkit-scrollbar {
     display: none;
@@ -53,11 +57,7 @@ html {
     margin: 0;
     height: 100%;
     position: fixed;
-    height: 100vh;
     width: 100vw;
-    background-color: var(--background-color);
-    color: var(--text-color) !important;
-    font-family: system-ui !important;
     /* Hide scrollbar for IE, Edge and Firefox */
     /* IE and Edge */
     -ms-overflow-style: none;
