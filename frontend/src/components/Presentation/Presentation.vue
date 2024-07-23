@@ -6,7 +6,7 @@
         </div>
         <div class="screen-large">
             <div class="presentation-title d-flex flex-column align-center">
-                <p class="presentation-title__p">SIUUU</p>
+                <p>SIUUU</p>
             </div>
             <div class="presentation-form">
 
@@ -21,27 +21,36 @@
                         </div>
                     </div>
 
-                    <div class="presentation-form-content"></div>
-
                     <div class="presentation-form-pseudo d-flex align-center justify-center">
                         <input type="text" id="username" v-model="username" maxlength="20" required
-                            placeholder="Entrer un pseudo" />
+                            placeholder="Entrer un pseudo..." />
                     </div>
 
                     <div class="presentation-form-skins d-flex">
                         <div class="presentation-form-skins-title d-flex align-center justify-end">
                             <p>Choix du skin</p>
                         </div>
-                        <div v-if="mapChoosen != null" 
+                        <div v-if="mapChoosen != null"
                             class="presentation-form-skins-btns d-flex align-center justify-center">
-                            <div v-for="(skin, index) in skinNames" :key="index" class="form-check" @click="clearErrors()">
+                            <div v-for="(skin, index) in skinNames" :key="index" class="d-flex flex-column align-center"
+                                @click="clearErrors()">
+                                <SkinVisualisation3d :modelPath="skin.name" :map="mapChoosen.name"/>
                                 <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
                                     class="form-check-input" :disabled="!skin.available" />
-                                <label :for="'skin' + index" class="form-check-label">{{ setRealName(skin.name)
-                                    }}</label>
                             </div>
                         </div>
                     </div>
+
+                    <div class="presentation-form-classe d-flex">
+                        <div class="presentation-form-classe-title d-flex align-center justify-end">
+                            <p>Choix de la classe</p>
+                        </div>
+                        <div v-if="mapChoosen != null"
+                            class="presentation-form-classe-content d-flex align-center justify-center">
+                            En cours de développement...
+                        </div>
+                    </div>
+
 
                     <div class="presentation-form-play d-flex align-center justify-center">
                         <p v-if="errorMessage || errorServer" class="error-message">{{ errorMessage }}</p>
@@ -58,11 +67,13 @@
 import { eventBus } from '../../plugins/eventBus';
 import { sendRequest } from '../../utils/api';
 import CustomeParticles from '../Particles/Particles.vue';
-import skins from '../../../static/datas/targetItems.js';
+import SkinVisualisation3d from './SkinVisualisation3d/SkinVisualisation3d.vue';
+import skinsSpace from '../../../static/datas/Skins/Skins_Space.js';
+import skinsZombie from '../../../static/datas/Skins/Skins_Zombie.js';
 
 export default {
     name: 'AppPresentation',
-    components: { CustomeParticles },
+    components: { CustomeParticles, SkinVisualisation3d },
     data() {
         return {
             username: '',
@@ -102,10 +113,10 @@ export default {
 
             if (response.status === "success") {
                 this.storeUserData();
-                eventBus.emit("startGame");
                 localStorage.setItem('username', this.username);
                 localStorage.setItem('mapChoosen', this.mapChoosen.name);
                 localStorage.setItem('userSkin', this.selectedSkin);
+                eventBus.emit("startGame");
             } else {
                 this.setError(response.data.data.message);
             }
@@ -121,7 +132,8 @@ export default {
         async changeMap(map) {
             this.clearErrors();
             this.mapChoosen = map;
-
+            this.selectedSkin = '';
+            
             const nbPlayer = this.maps.find(m => m.id === map.id).nbplayer
             if (nbPlayer == map.quantity) {
                 this.mapIsFull = true
@@ -138,13 +150,16 @@ export default {
         },
         updateSkinNames(users) {
             const usedSkins = new Set(users.map(user => user.skin));
+            if(this.mapChoosen.name === 'Space') {
+                var skins = skinsSpace;
+            } else {
+                var skins = skinsZombie;
+            }
+
             this.skinNames = Object.keys(skins).map(skin => ({
                 name: skin,
                 available: !usedSkins.has(skin)
             }));
-        },
-        setRealName(name) {
-            return name = name.split('_').join(' ');
         },
         storeUserData() {
             localStorage.setItem('mapChoosen', this.mapChoosen.name);
@@ -212,7 +227,7 @@ export default {
 
 /* Titre */
 .presentation-title {
-    height: 120px;
+    height: 12vh;
     font-size: 80px;
 
     p:hover {
@@ -283,7 +298,7 @@ export default {
 /* Pseudo */
 .presentation-form-pseudo {
     height: 10vh;
-    bottom: 20vh;
+    bottom: 50vh;
     position: absolute;
 
     input {
@@ -304,9 +319,9 @@ export default {
 
 /* Skin */
 .presentation-form-skins {
-    height: 10vh;
+    height: 20vh;
     width: 100%;
-    bottom: 10vh;
+    bottom: 30vh;
     position: absolute;
 }
 
@@ -323,10 +338,42 @@ export default {
     width: 80%;
 
     div {
+        width: 90%;
+        padding: 5px 10px;
+    }
+}
+
+.presentation-form-skins-img {
+    height: 18vh;
+    width: 100%;
+}
+
+/* Weapon choice */
+.presentation-form-classe {
+    bottom: 10vh;
+    height: 20vh;
+    width: 100%;
+    position: absolute;
+}
+
+.presentation-form-classe-title {
+    width: 20%;
+    padding: 10px 30px;
+
+    p {
+        font-size: 25px;
+    }
+}
+
+.presentation-form-classe-content {
+    width: 80%;
+
+    div {
         width: 20%;
         padding: 10px 30px;
     }
 }
+
 
 /* Play btn */
 .presentation-form-play {

@@ -31,7 +31,9 @@ const initWebSocket = (http) => {
             console.log(`${id} is disconnected`);
             userService.deleteUser(id);
             mapService.decrementPlayerCount(id);
+
             if (ws.roomId && rooms[ws.roomId]) {
+                rooms[ws.roomId].clients.delete(ws);
                 broadcast(ws.roomId, { type: 'player disconnect', playerId: id, playerCount: rooms[ws.roomId].clients.size });
                 delete rooms[ws.roomId].players[id];
             }

@@ -7,7 +7,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';    // Pour les 
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
-import skins from '../../../../static/datas/targetItems.js';
+import skinsSpace from '../../../../static/datas/Skins/Skins_Space.js';
+import skinsZombie from '../../../../static/datas/Skins/Skins_Zombie.js';
 
 export const entity_enemy = (() => {
 
@@ -42,12 +43,13 @@ export const entity_enemy = (() => {
     };
 
     class TargetCharacterController extends entity.Component {
-        constructor(params, skin, playerId) {
+        constructor(params, skin, playerId, map) {
             super();
             this.params_ = params;
             this.skin_ = skin;
             this.mesh_ = null;
             this.playerId_ = playerId;
+            this.map_ = map;
             this.positionHistory_ = [];
             this.historyLength_ = 5; // Nombre de positions à conserver
             this.positionThreshold_ = 0.001; // Seuil de différence pour considérer le mouvement
@@ -96,6 +98,8 @@ export const entity_enemy = (() => {
         }
 
         LoadModels_() {
+            var skins = this.map_ == "Space" ? skinsSpace : skinsZombie;
+
             const enemyGltf = skins[this.skin_];
             const gltfLoader = new GLTFLoader();
 

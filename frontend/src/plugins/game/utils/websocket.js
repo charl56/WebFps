@@ -70,10 +70,11 @@ export const web_socket = (() => {
                         this.player.id = data.playerId;
                         this.player.health = 100;
                         const players = Object.keys(data.players)
-                        console.log("joueur dea la : " + players)
                         // Check all that isn't local player
+                        console.log(data.playerCount)
                         for (let i = 0; i < data.playerCount; i++) {
                             if (players[i] !== this.player.id) {
+                                console.log('initPlayer', players[i], data.players[players[i]]);
                                 this.initRemotePlayer(players[i], data.players[players[i]].skin);
                             }
                         }
@@ -139,7 +140,7 @@ export const web_socket = (() => {
 
         async initRemotePlayer(playerID, skin) {
             const enemy = new entity.Entity();
-            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin, playerID))
+            enemy.AddComponent("TargetCharacterController", new entity_enemy.TargetCharacterController(this.params, skin, playerID, localStorage.getItem('mapChoosen')))
             enemy.AddComponent("KinematicCharacterControllerEnemy", new kinematic_character_controller.KinematicCharacterControllerEnemy(this.params));       // Set physical body to enemies
             this.Manager.Add(enemy, playerID);
 
