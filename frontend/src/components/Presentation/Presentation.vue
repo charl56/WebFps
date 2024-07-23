@@ -30,11 +30,11 @@
 
                     <div class="presentation-form-skins d-flex">
                         <div class="presentation-form-skins-title d-flex align-center justify-end">
-                            <p v-if="mapChoosen != null">Choix du skin</p>
+                            <p>Choix du skin</p>
                         </div>
-                        <div v-if="mapChoosen != null"
+                        <div v-if="mapChoosen != null" 
                             class="presentation-form-skins-btns d-flex align-center justify-center">
-                            <div v-for="(skin, index) in skinNames" :key="index" class="form-check">
+                            <div v-for="(skin, index) in skinNames" :key="index" class="form-check" @click="clearErrors()">
                                 <input type="radio" :id="'skin' + index" :value="skin.name" v-model="selectedSkin"
                                     class="form-check-input" :disabled="!skin.available" />
                                 <label :for="'skin' + index" class="form-check-label">{{ setRealName(skin.name)
@@ -126,6 +126,8 @@ export default {
             if (nbPlayer == map.quantity) {
                 this.mapIsFull = true
             }
+
+            document.documentElement.style.setProperty('--background-color', map.color);
 
             const response = await sendRequest('GET', `maps/${map.name}`);
             if (response.status === "success") {
@@ -250,7 +252,7 @@ export default {
             position: absolute;
             width: 0;
             height: 5px;
-            bottom: 5px;
+            bottom: 11px;
             left: 0;
             background-color: var(--text-color);
             transition: width 0.3s ease-in-out;

@@ -38,7 +38,7 @@ export default {
 
 <style>
 :root {
-    --background-color: #AEC8CE;
+    --background-color: black;
     --text-selection: #7eb3e8;
     --text-color: white;
     --text-color-danger: #cd5858;
