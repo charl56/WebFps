@@ -10,16 +10,18 @@
             </div>
             <div class="presentation-form">
 
-                <form @submit.prevent="login" v-if="!errorServer"
-                    class="d-flex flex-column justify-space-between align-center h-100">
+                <form @submit.prevent="login" class="d-flex flex-column align-center h-100">
                     <div class="presentation-form-maps d-flex justify-space-around w-100">
                         <div v-for="(map, index) in maps" :key="index" class="d-flex align-center justify-center"
                             :class="{ 'map-available': map.availability, 'map-not-available': !map.availability || map.nbplayer == map.quantity, 'map-selected': mapChoosen && mapChoosen.name === map.name }">
-                            <p @click="changeMap(map)">{{ map.name }}</p>
-                            <!-- <p>{{ map.nbplayer }} / {{ map.quantity }}</p> -->
-
+                            <div>
+                                <p @click="changeMap(map)">{{ map.name }}</p>
+                                <p>{{ map.nbplayer }} joueur(s) sur {{ map.quantity }}</p>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="presentation-form-content"></div>
 
                     <div class="presentation-form-pseudo d-flex align-center justify-center">
                         <input type="text" id="username" v-model="username" maxlength="20" required
@@ -41,8 +43,9 @@
                         </div>
                     </div>
 
-                    <div class="presentation-play">
+                    <div class="presentation-form-play d-flex align-center justify-center">
                         <p v-if="errorMessage || errorServer" class="error-message">{{ errorMessage }}</p>
+                        <p v-else-if="mapIsFull" class="error-message">La partie est pleine</p>
                         <button v-else type="submit" class="btn btn-primary my-5">Jouer</button>
                     </div>
                 </form>
@@ -69,7 +72,8 @@ export default {
             maps: [],
             mapChoosen: null,
             skinNames: [],
-            selectedSkin: ''
+            selectedSkin: '',
+            mapIsFull: false
         }
     },
     mounted() {
@@ -111,17 +115,23 @@ export default {
             if (response.status === "success") {
                 this.maps = response.data.data;
             } else {
-                this.setServerError('Multi not available.');
+                this.setServerError('Aucune map disponible, veuillez réessayer plus tard');
             }
         },
         async changeMap(map) {
             this.clearErrors();
             this.mapChoosen = map;
+
+            const nbPlayer = this.maps.find(m => m.id === map.id).nbplayer
+            if (nbPlayer == map.quantity) {
+                this.mapIsFull = true
+            }
+
             const response = await sendRequest('GET', `maps/${map.name}`);
             if (response.status === "success") {
                 this.updateSkinNames(response.data.data.users);
             } else {
-                this.setServerError('Skins not found.');
+                this.setServerError('Impossible de récupérer les skins, veuillez réessayer plus tard');
             }
         },
         updateSkinNames(users) {
@@ -142,6 +152,7 @@ export default {
             this.error = false;
             this.errorServer = false;
             this.errorMessage = '';
+            this.mapIsFull = false
         },
         setError(message) {
             this.error = true;
@@ -199,11 +210,12 @@ export default {
 
 /* Titre */
 .presentation-title {
-    height: 125px;
+    height: 120px;
     font-size: 80px;
 
     p:hover {
         text-decoration: none;
+        scale: 1;
     }
 }
 
@@ -215,15 +227,34 @@ export default {
 
 /* Maps choose */
 .presentation-form-maps {
-    height: 120px;
+    height: 10vh;
 
     div:hover {
-        cursor: pointer;
+        p:first-of-type {
+            scale: 1.03;
+            cursor: pointer;
+        }
+
+        p:first-of-type::before {
+            width: 100%;
+        }
     }
 
-    p {
+    p:first-of-type {
         color: var(--text-color);
         font-size: 50px;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 5px;
+            bottom: 5px;
+            left: 0;
+            background-color: var(--text-color);
+            transition: width 0.3s ease-in-out;
+        }
     }
 }
 
@@ -242,13 +273,17 @@ export default {
 }
 
 .map-selected {
-    p {
+    p:first-of-type {
         text-decoration: underline
     }
 }
 
 /* Pseudo */
 .presentation-form-pseudo {
+    height: 10vh;
+    bottom: 20vh;
+    position: absolute;
+
     input {
         width: 400px;
         height: 55px;
@@ -267,8 +302,10 @@ export default {
 
 /* Skin */
 .presentation-form-skins {
-    height: 120px;
+    height: 10vh;
     width: 100%;
+    bottom: 10vh;
+    position: absolute;
 }
 
 .presentation-form-skins-title {
@@ -290,134 +327,47 @@ export default {
 }
 
 /* Play btn */
-.presentation-play {
-    height: 120px;
+.presentation-form-play {
+    height: 10vh;
+    bottom: 0;
+    position: absolute;
 
     button {
         color: var(--text-color);
         font-size: 50px;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 5px;
+            bottom: 5px;
+            left: 0;
+            background-color: var(--text-color);
+            transition: width 0.3s ease-in-out;
+        }
+
+        &:hover::before {
+            width: 100%;
+        }
     }
 }
 
+.presentation-form-play:hover {
+    scale: 1.03;
+}
 
 
+/* Error messages */
+.error-message {
+    color: #BA4949;
+    font-size: 25px;
+    text-decoration: underline;
+}
 
 /* CSS Components */
-p:hover,
-button:hover {
-    text-decoration: underline;
-    scale: 1.05;
+input:hover {
+    box-shadow: 0 0 5px 0px rgba(161, 161, 161, 0.5);
 }
-
-
-/* .presentation-title {
-    font-size: 50px;
-    font-family: system-ui;
-}
-
-.btn-primary {
-    font-size: 30px;
-    cursor: pointer;
-    border: 1px solid rgba(224, 222, 222, 0.8);
-    border-radius: 50px;
-    animation: blink-animation 1.5s infinite;
-}
-
-@keyframes blink-animation {
-    0% {
-        opacity: 1;
-    }
-
-    30% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.btn-primary:hover {
-    background-color: rgba(255, 255, 255, 0.123);
-    animation: size-animation 1.5s infinite;
-}
-
-@keyframes size-animation {
-    0% {
-        transform: scale(1);
-    }
-
-    30% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    border-radius: 5px;
-    border: 1px solid white;
-    color: white;
-}
-
-.btn-map {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.btn-map-input {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease-in-out;
-}
-
-.btn-map-input button {
-    background-color: transparent;
-    border: none;
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.map-available button {
-    background-color: #6fad71;
-}
-
-.map-not-available button {
-    background-color: #d8515e;
-}
-
-.map-not-available button:hover {
-    cursor: not-allowed;
-}
-
-.map-available:hover {
-    transform: scale(1.05);
-}
-
-.map-not-available:hover {
-    transform: scale(1);
-}
-
-.selected button {
-    color: white;
-    border: 1px solid white;
-    background-color: #6cc46f;
-}
-
-.error-message {
-    color: #f44336;
-    font-size: 15px;
-    margin-top: 10px;
-} */
 </style>

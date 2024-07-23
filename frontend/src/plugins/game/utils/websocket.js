@@ -14,11 +14,7 @@ export const web_socket = (() => {
         constructor(params) {
             super();
             this.params = params;
-            this.params.box = new THREE.Vector3(
-                1,
-                2.2,
-                1
-            );
+            this.params.box = new THREE.Vector3(1, 2.2, 1);
             this.scene = params.scene;
             this.socket = null;
             this.open = false;
@@ -74,7 +70,7 @@ export const web_socket = (() => {
                         this.player.id = data.playerId;
                         this.player.health = 100;
                         const players = Object.keys(data.players)
-
+                        console.log("joueur dea la : " + players)
                         // Check all that isn't local player
                         for (let i = 0; i < data.playerCount; i++) {
                             if (players[i] !== this.player.id) {

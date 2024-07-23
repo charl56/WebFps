@@ -6,29 +6,35 @@ const initWebSocket = (http) => {
     const wss = new WebSocket.Server({ server: http });
 
     let players = {};
+    let rooms = {};
 
-    const broadcast = (data) => {
+    const broadcast = (roomId, data) => {
         wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
+            if (client.readyState === WebSocket.OPEN && client.roomId === roomId) {
                 client.send(JSON.stringify(data));
             }
         });
     };
 
     setInterval(() => {
-        broadcast({ type: 'playerPositions', players });
+        for (const roomId in rooms) {
+            broadcast(roomId, { type: 'playerPositions', players: rooms[roomId].players });
+        }
     }, 1000 / 60);
 
     wss.on('connection', (ws) => {
         // const id = ws._socket.remoteAddress + ":" + ws._socket.remotePort;
         let id = '';
+        ws.roomId = '';
 
         ws.on('close', () => {
             console.log(`${id} is disconnected`);
             userService.deleteUser(id);
             mapService.decrementPlayerCount(id);
-            broadcast({ type: 'player disconnect', playerId: id, playerCount: wss.clients.size });
-            delete players[id];
+            if (ws.roomId && rooms[ws.roomId]) {
+                broadcast(ws.roomId, { type: 'player disconnect', playerId: id, playerCount: rooms[ws.roomId].clients.size });
+                delete rooms[ws.roomId].players[id];
+            }
         });
 
         ws.on('message', (message) => {
@@ -43,12 +49,17 @@ const initWebSocket = (http) => {
             switch (data.type) {
                 case 'initUser':
                     const { username, map, skin } = data;
-                    if (username === null || username === '') return
+                    if (!username) return;
 
-                    userService.createUser(username, map, skin);
                     id = username;
-                    
-                    players[username] = {
+                    ws.roomId = map;
+
+                    if (!rooms[map]) {
+                        rooms[map] = { players: {}, clients: new Set() };
+                    }
+
+                    rooms[map].clients.add(ws);
+                    rooms[map].players[username] = {
                         position: [0, 0, 0],
                         direction: [0, 0, 0],
                         health: 100,
@@ -57,32 +68,33 @@ const initWebSocket = (http) => {
                         skin: skin
                     };
 
+                    userService.createUser(username, map, skin);
                     console.log(`${username} connected with map ${map} and skin ${skin}`);
 
-                    broadcast({ type: 'player connect', playerId: username, playerCount: wss.clients.size, skin: players[username].skin });
-                    ws.send(JSON.stringify({ type: 'initPlayer', playerId: username, playerCount: wss.clients.size, players: players }));
-
+                    broadcast(map, { type: 'player connect', playerId: username, playerCount: rooms[map].clients.size, skin: skin });
+                    ws.send(JSON.stringify({ type: 'initPlayer', playerId: username, playerCount: rooms[map].clients.size, players: rooms[map].players }));
                     break;
                 case 'chat message':
-                    broadcast({ type: 'chat message', username: data.username, message: data.message });
+                    console.log(ws.roomId)
+                    broadcast(ws.roomId, { type: 'chat message', username: data.username, message: data.message });
                     break;
                 case 'kill message':
-                    broadcast({ type: 'kill message', shooter: data.shooter, killed: data.killed });
+                    broadcast(ws.roomId, { type: 'kill message', shooter: data.shooter, killed: data.killed });
                     break;
                 case 'updateClientPos':
-                    if (players[id]) {
-                        players[id].position = data.position;
-                        players[id].direction = data.direction;
+                    if (rooms[ws.roomId] && rooms[ws.roomId].players[id]) {
+                        rooms[ws.roomId].players[id].position = data.position;
+                        rooms[ws.roomId].players[id].direction = data.direction;
                     }
                     break;
                 case 'updateClientHealth':
-                    if (players[data.victim]) {
-                        players[data.victim].health -= data.damage;
-                        if (players[data.victim].health <= 0) {
-                            players[data.victim].health = 100;
-                            players[data.victim].deaths++;
-                            players[id].kills++;
-                            broadcast({ type: 'kill message', shooter: id, victim: data.victim });
+                    if (rooms[ws.roomId] && rooms[ws.roomId].players[data.victim]) {
+                        rooms[ws.roomId].players[data.victim].health -= data.damage;
+                        if (rooms[ws.roomId].players[data.victim].health <= 0) {
+                            rooms[ws.roomId].players[data.victim].health = 100;
+                            rooms[ws.roomId].players[data.victim].deaths++;
+                            rooms[ws.roomId].players[id].kills++;
+                            broadcast(ws.roomId, { type: 'kill message', shooter: id, victim: data.victim });
                         }
                     }
                     break;
