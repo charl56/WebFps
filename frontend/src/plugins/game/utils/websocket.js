@@ -71,10 +71,8 @@ export const web_socket = (() => {
                         this.player.health = 100;
                         const players = Object.keys(data.players)
                         // Check all that isn't local player
-                        console.log(data.playerCount)
                         for (let i = 0; i < data.playerCount; i++) {
                             if (players[i] !== this.player.id) {
-                                console.log('initPlayer', players[i], data.players[players[i]]);
                                 this.initRemotePlayer(players[i], data.players[players[i]].skin);
                             }
                         }
