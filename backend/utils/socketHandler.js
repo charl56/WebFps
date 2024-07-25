@@ -95,6 +95,7 @@ const initWebSocket = (http) => {
                         if (rooms[ws.roomId].players[data.victim].health <= 0) {
                             rooms[ws.roomId].players[data.victim].health = 100;
                             rooms[ws.roomId].players[data.victim].deaths++;
+                            rooms[ws.roomId].players[data.victim].position = [0, 27, 0];
                             rooms[ws.roomId].players[id].kills++;
                             broadcast(ws.roomId, { type: 'kill message', shooter: id, victim: data.victim });
                         }

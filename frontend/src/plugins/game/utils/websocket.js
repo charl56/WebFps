@@ -162,7 +162,6 @@ export const web_socket = (() => {
                     if (this.players[id] && this.players[id].isReady) {
                         const remotePlayer = remotePlayers[id];
                         const localPlayer = this.players[id];
-
                         // Update position
                         if (!localPlayer.positionSync.equals(remotePlayer.position)) {
                             positionSync.fromArray(remotePlayer.position);

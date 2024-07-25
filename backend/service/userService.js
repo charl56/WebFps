@@ -14,9 +14,10 @@ exports.createUser = (username, mapName, skin) => {
 };
 
 exports.deleteUser = (username) => {
-    const userIndex = userList.findIndex(user => user.username === username);
-    if (userIndex < 0) return false;
-    userList.splice(userIndex, 1);
-    return true;
+    userList.forEach((user, index) => {     // For each, because sometimes an user is added multiple times
+        if (user.username === username) {
+            userList.splice(index, 1);
+        }
+    });
 };
 
