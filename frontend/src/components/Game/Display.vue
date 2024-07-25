@@ -15,7 +15,9 @@ const movementLogo = new URL('../../assets/Icons/movementLogo.png', import.meta.
         <div id="score-table">
 
         </div>
-        <div id="top-left" class="div-quart"></div>
+        <div id="top-left" class="div-quart">
+            <p id="ping-p">Ping</p>
+        </div>
         <div id="top-right" class="div-quart"></div>
         <div id="bottom-left" class="div-quart">
             <section id="chatSection" class="chatContainer hidden">
@@ -131,6 +133,10 @@ export default {
 #top-left {
     top: 0;
     left: 0;
+    padding: 45px 7px;
+    p {
+        font-size: 15px;
+    }
 }
 
 #top-right {

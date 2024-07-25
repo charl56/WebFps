@@ -101,6 +101,9 @@ const initWebSocket = (http) => {
                         }
                     }
                     break;
+                case 'ping':
+                    ws.send(JSON.stringify({ type: 'pong' }));
+                    break;
                 default:
                     console.error('Unknown message type:', data.type);
             }

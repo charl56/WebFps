@@ -23,11 +23,14 @@ export const web_socket = (() => {
             this.chatMessages = new Array();
 
             this.elapsedTime = 0;
+            this.pingInterval = null;
+            this.pingTime = 0;
 
             this.ui = {
                 body: document.querySelector('body'),
                 chatSection: document.getElementById('chatSection'),
                 chatList: document.querySelector('.chatList'),
+                ping: document.getElementById('ping-p'),
                 crosshair: null,
             };
         }
@@ -35,10 +38,15 @@ export const web_socket = (() => {
         InitComponent() {
             const backendAddress = import.meta.env.VITE_BACK_WS || "ws://127.0.0.1:3000/" // WebSocket address
             this.socket = new WebSocket(backendAddress);
-            
+
             this.socket.onopen = () => {
                 this.handleConnect();
             };
+
+            this.pingInterval = setInterval(() => {
+                this.pingTime = Date.now();
+                this.socket.send(JSON.stringify({ type: 'ping' }));
+            }, 1000); // Ping every 1 second
 
             this.socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
@@ -77,6 +85,10 @@ export const web_socket = (() => {
                             }
                         }
                         break;
+                    case 'pong':
+                        const latency = Date.now() - this.pingTime;
+                        this.ui.ping.innerHTML = `Ping: ${latency} ms`;
+                        break;
                     default:
                         console.error('Unknown message type:', data.type);
                 }
@@ -84,6 +96,7 @@ export const web_socket = (() => {
 
             this.socket.onclose = () => {
                 console.log('WebSocket connection closed');
+                clearInterval(this.pingInterval);
             };
 
             document.addEventListener('keyup', (event) => {
@@ -392,7 +405,7 @@ export const web_socket = (() => {
             this.updateChatList();
             this.updateUi();
             this.updateScoreTable();
-            
+
             // console.log(Object.keys(this.Parent.parent_.entities_))
             // console.log(this.Parent.parent_.entities_)
         }
