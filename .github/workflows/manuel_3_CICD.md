@@ -2,7 +2,7 @@
 
 Clé SSH : Génère une clé SSH sur ton serveur et ajoute la clé publique à ton dépôt GitHub sous Settings > Secrets and variables > Actions > New repository secret.
 Liste des variables : 
-- SERVER_IP
+- SERVER_IP  
 - USER
 - SSH_PRIVATE_KEY
 - SSH_PORT
